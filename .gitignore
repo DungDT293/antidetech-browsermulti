@@ -1,0 +1,17 @@
+# Chromium source & build outputs
+src/
+depot_tools/
+*.exe
+*.dll
+*.pak
+*.bin
+
+# User Profile & Sessions
+user_data/
+user_data_*/
+
+# Dependencies & Logs
+node_modules/
+npm-debug.log
+.DS_Store
+Thumbs.db

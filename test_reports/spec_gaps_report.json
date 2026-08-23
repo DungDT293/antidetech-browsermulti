@@ -1,0 +1,56 @@
+[
+  {
+    "tier": 3,
+    "item": "Descriptor window.chrome",
+    "status": "{\"writable\":true,\"enumerable\":true,\"configurable\":true}",
+    "detail": "writable/enumerable/configurable"
+  },
+  {
+    "tier": 3,
+    "item": "window.chrome branches",
+    "status": "{\"runtime\":\"undefined\",\"csi\":\"function\",\"loadTimes\":\"function\",\"app\":\"object\",\"appIsInstalled\":\"function\"}",
+    "detail": ""
+  },
+  {
+    "tier": 3,
+    "item": "plugins named+indexed+proto",
+    "status": "{\"length\":5,\"namedChromePDF\":true,\"namedPDFViewer\":true,\"indexedFirst\":true,\"pluginProto\":true,\"mimeTypeProto\":\"MimeType\"}",
+    "detail": "['Chrome PDF Viewer'], [0], prototype"
+  },
+  {
+    "tier": 3,
+    "item": "Permissions sync",
+    "status": "MISMATCH",
+    "detail": "{\"permissionsState\":\"denied\",\"notificationPermission\":\"denied\"}"
+  },
+  {
+    "tier": 3,
+    "item": "WorkerNavigator nhất quán",
+    "status": "MISMATCH",
+    "detail": "{\"mainHC\":44,\"mainLang\":\"en-US\",\"worker\":{\"hc\":44,\"lang\":\"en-US\",\"langs\":\"[\\\"en-US\\\",\\\"en\\\"]\",\"tz\":\"Asia/Bangkok\"}}"
+  },
+  {
+    "tier": 2,
+    "item": "navigator.webdriver native getter",
+    "status": "{\"value\":false,\"hasGetter\":true,\"getterStr\":\"function get webdriver() { [native code] }\"}",
+    "detail": "phải là getter C++ [native code]"
+  },
+  {
+    "tier": 4,
+    "item": "Screen geometry",
+    "status": "OK",
+    "detail": "{\"innerW\":1280,\"innerH\":759,\"outerW\":1296,\"outerH\":854,\"screenW\":1920,\"screenH\":1080,\"availW\":1920,\"availH\":1040,\"screenX\":10,\"screenY\":10,\"dpr\":1}"
+  },
+  {
+    "tier": 1,
+    "item": "TLS JA4 / Akamai hash / H2",
+    "status": "ja4=t13d1517h2_8daaf6152771_cb7bf5808d99 akamai_hash=52d84b11737d980aef856699f885ca86 http=h2",
+    "detail": ""
+  },
+  {
+    "tier": 2,
+    "item": "CDP flags (deviceandbrowserinfo, qua Playwright)",
+    "status": "isBot=false",
+    "detail": "(không có cờ true)"
+  }
+]

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><body><pre id="out">running</pre>
+<script>
+function measure(label, fn) {
+  const deltas = [];
+  let prev = performance.now();
+  for (let i = 0; i < 5000; i++) {
+    const t = performance.now();
+    if (t > prev) { deltas.push(t - prev); prev = t; }
+  }
+  deltas.sort((a,b)=>a-b);
+  return {
+    label,
+    minDelta: deltas[0],
+    p50: deltas[Math.floor(deltas.length/2)],
+    maxDelta: deltas[deltas.length-1],
+    count: deltas.length
+  };
+}
+const results = [measure('main', null)];
+try {
+  const blob = new Blob([`let prev=self.performance.now();const d=[];for(let i=0;i<5000;i++){const t=self.performance.now();if(t>prev){d.push(t-prev);prev=t;}}d.sort((a,b)=>a-b);self.postMessage({min:d[0],p50:d[Math.floor(d.length/2)],max:d[d.length-1]});`], {type:'application/javascript'});
+  const w = new Worker(URL.createObjectURL(blob));
+  w.onmessage = (e) => {
+    results.push({label:'worker', minDelta:e.data.min, p50:e.data.p50, maxDelta:e.data.max});
+    document.getElementById('out').textContent = 'RESULT:' + JSON.stringify(results);
+  };
+} catch (err) {
+  document.getElementById('out').textContent = 'RESULT:' + JSON.stringify(results) + ' worker_error=' + err.message;
+}
+</script></body></html>
