@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$Root = 'D:\dichchrome',
-    [switch]$DryRun = $false
+    [switch]$DryRun = $false,
+    [switch]$ForceBuild = $false
 )
 
 $ErrorActionPreference = 'Stop'
@@ -43,37 +44,46 @@ function Invoke-NativeCommand {
     )
 
     Write-Log "Starting: $Description..."
+    $previousErrorActionPreference = $ErrorActionPreference
+    $nativePreferenceVariable = Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue
+    $previousNativePreference = if ($null -ne $nativePreferenceVariable) {
+        $nativePreferenceVariable.Value
+    } else {
+        $null
+    }
     $oldLocation = Get-Location
-    $preferenceVariable = Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue
-    $previousPreference = if ($null -ne $preferenceVariable) { $preferenceVariable.Value } else { $null }
-    $exitCode = 1
+    $output = @()
+    $exitCode = 0
 
     try {
+        $ErrorActionPreference = 'Continue'
+        if ($null -ne $nativePreferenceVariable) {
+            $PSNativeCommandUseErrorActionPreference = $false
+        }
         if ($WorkingDirectory) {
             Set-Location -LiteralPath $WorkingDirectory
         }
-        if ($null -ne $preferenceVariable) {
-            $PSNativeCommandUseErrorActionPreference = $false
-        }
 
-        $output = & $Command 2>&1
+        # Native stderr is captured as output; only process exit code decides failure.
+        $output = @(& $Command 2>&1)
         $exitCode = $LASTEXITCODE
-
-        foreach ($line in @($output)) {
-            $lineString = $line.ToString()
-            Add-Content -LiteralPath $LogPath -Value "  [CMD-OUT] $lineString" -Encoding UTF8
-            Write-Host "  $lineString" -ForegroundColor Gray
-        }
     }
     finally {
-        if ($null -ne $preferenceVariable) {
-            $PSNativeCommandUseErrorActionPreference = $previousPreference
+        $ErrorActionPreference = $previousErrorActionPreference
+        if ($null -ne $nativePreferenceVariable) {
+            $PSNativeCommandUseErrorActionPreference = $previousNativePreference
         }
         Set-Location -LiteralPath $oldLocation
     }
 
+    foreach ($line in $output) {
+        $lineString = $line.ToString()
+        Add-Content -LiteralPath $LogPath -Value "  [CMD-OUT] $lineString" -Encoding UTF8
+        Write-Host "  $lineString" -ForegroundColor Gray
+    }
+
     if ($exitCode -ne 0) {
-        throw "Command failed with exit code $exitCode at step: $Description"
+        throw "Command failed with actual exit code $exitCode at step: $Description"
     }
     Write-Log "Completed: $Description" -Level 'SUCCESS'
 }
@@ -178,7 +188,7 @@ try {
     if (Test-Path -LiteralPath $VersionFile) {
         $currentVersion = (Get-Content -LiteralPath $VersionFile -Raw).Trim()
     }
-    if ($currentVersion -and (Compare-ChromeVersion $latestVersion $currentVersion) -le 0) {
+    if (-not $ForceBuild -and $currentVersion -and (Compare-ChromeVersion $latestVersion $currentVersion) -le 0) {
         Write-Log 'Đã ở bản mới nhất'
         exit 0
     }
@@ -188,9 +198,14 @@ try {
         Write-Log 'DRY-RUN: no source, version marker, build output, or release archive will be modified.'
         Invoke-Checked 'git' @('checkout', '.') 'Reset source changes' $Src
         Invoke-Checked 'git' @('clean', '-df') 'Clean untracked source files' $Src
-        Invoke-Checked 'git' @('fetch', '--tags') 'Fetch Chromium tags' $Src
+        $existingTag = & git tag -l $latestVersion
+        if (-not $existingTag) {
+            Invoke-Checked 'git' @('fetch', '--depth=1', 'origin', ('refs/tags/{0}:refs/tags/{0}' -f $latestVersion), '--no-tags') "Fetch single tag $latestVersion" $Src
+        } else {
+            Write-Log "Tag $latestVersion already exists locally; skipping network fetch." -Level 'SUCCESS'
+        }
         Invoke-Checked 'git' @('checkout', ('tags/{0}' -f $latestVersion)) 'Checkout Stable tag' $Src
-        Invoke-Checked 'gclient' @('sync', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
+        Invoke-Checked 'gclient.bat' @('sync', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
         Invoke-Checked 'git' @('apply', '--3way', '--ignore-whitespace', $ChromiumPatch) 'Apply Chromium patch' $Src
         Invoke-Checked 'git' @('apply', '--3way', '--ignore-whitespace', $V8Patch) 'Apply V8 patch' (Join-Path $Src 'v8')
         $env:PATH = '{0};{1}' -f $DepotTools, $env:PATH
@@ -203,9 +218,16 @@ try {
 
     Invoke-Checked 'git' @('checkout', '.') 'Reset source changes' $Src
     Invoke-Checked 'git' @('clean', '-df') 'Clean untracked source files' $Src
-    Invoke-Checked 'git' @('fetch', '--tags') 'Fetch Chromium tags' $Src
+    $existingTag = & git tag -l $latestVersion
+    if (-not $existingTag) {
+        Invoke-Checked 'git' @('fetch', '--depth=1', 'origin', ('refs/tags/{0}:refs/tags/{0}' -f $latestVersion), '--no-tags') "Fetch single tag $latestVersion" $Src
+    } else {
+        Write-Log "Tag $latestVersion already exists locally; skipping network fetch." -Level 'SUCCESS'
+    }
     Invoke-Checked 'git' @('checkout', ('tags/{0}' -f $latestVersion)) 'Checkout Stable tag' $Src
-    Invoke-Checked 'gclient' @('sync', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
+    $env:PATH = '{0};{1}' -f $DepotTools, $env:PATH
+    Assert-Path (Join-Path $DepotTools 'gclient.bat') 'gclient command'
+    Invoke-Checked 'gclient.bat' @('sync', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
 
     Write-Log 'Applying BrowserMulti patch.'
     try {
@@ -233,10 +255,50 @@ try {
     Assert-Path $buildOutput 'build output directory'
     New-Item -ItemType Directory -Force -Path $Dist | Out-Null
     $releaseZip = Join-Path $Dist ('browsermulti-{0}-win64.zip' -f $latestVersion)
+    $stagingDir = Join-Path $Dist 'staging'
+    if (Test-Path -LiteralPath $stagingDir) {
+        Remove-Item -LiteralPath $stagingDir -Recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $stagingDir | Out-Null
+    Write-Log 'Staging BrowserMulti strict runtime whitelist.'
+    $coreFiles = @(
+        'chrome.exe',
+        'chrome.dll',
+        'chrome_elf.dll',
+        'crashpad_handler.exe',
+        'icudtl.dat',
+        'v8_context_snapshot.bin',
+        'resources.pak',
+        'chrome_100_percent.pak',
+        'chrome_200_percent.pak',
+        'libEGL.dll',
+        'libGLESv2.dll',
+        'vk_swiftshader.dll',
+        'vulkan-1.dll',
+        'd3dcompiler_47.dll',
+        'dxcompiler.dll',
+        'dxil.dll'
+    )
+    foreach ($file in $coreFiles) {
+        $sourcePath = Join-Path $buildOutput $file
+        if (Test-Path -LiteralPath $sourcePath) {
+            Copy-Item -LiteralPath $sourcePath -Destination $stagingDir -Force
+        }
+    }
+    foreach ($directory in @('locales', 'MEIPreload')) {
+        $sourceDirectory = Join-Path $buildOutput $directory
+        if (Test-Path -LiteralPath $sourceDirectory) {
+            Copy-Item -LiteralPath $sourceDirectory -Destination (Join-Path $stagingDir $directory) -Recurse -Force
+        }
+    }
     if (Test-Path -LiteralPath $releaseZip) {
         Remove-Item -LiteralPath $releaseZip -Force
     }
-    Compress-Archive -Path (Join-Path $buildOutput '*') -DestinationPath $releaseZip -CompressionLevel Optimal
+    Write-Log ('Compressing release: {0}' -f $releaseZip)
+    Compress-Archive -Path (Join-Path $stagingDir '*') -DestinationPath $releaseZip -CompressionLevel Optimal -Force
+    Remove-Item -LiteralPath $stagingDir -Recurse -Force
+    $zipSizeMB = [math]::Round(((Get-Item -LiteralPath $releaseZip).Length / 1MB), 2)
+    Write-Log ('Release archive complete: {0} MB' -f $zipSizeMB) -Level 'SUCCESS'
 
     Write-Log 'BrowserMulti release ready for GitHub Releases.'
     Write-Log ('Version: {0}' -f $latestVersion)
