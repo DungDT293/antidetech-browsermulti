@@ -19,6 +19,11 @@ Thumbs.db
 # Benchmark artifacts & temporary test profiles
 benchmark_report.json
 *.screenshot.png
+__pycache__/
+*.py[cod]
+*.egg-info/
+profiles/
+
 dist/test_extract/
 dist/staging/
 dist/temp_smoke_profile/
