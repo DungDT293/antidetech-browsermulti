@@ -15,3 +15,17 @@ node_modules/
 npm-debug.log
 .DS_Store
 Thumbs.db
+
+# Benchmark artifacts & temporary test profiles
+benchmark_report.json
+*.screenshot.png
+dist/test_extract/
+dist/staging/
+dist/temp_smoke_profile/
+dist/original_profile/
+dist/verify_*
+dist/smoke_*
+dist/*_profile/
+cdp_profile/
+cdp_profile2/
+logs/
