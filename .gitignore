@@ -42,3 +42,4 @@ logs/
 /dist/
 /temp_baseline/
 /test_reports/
+*.patch
