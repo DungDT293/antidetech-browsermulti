@@ -13,6 +13,12 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
+<p align="center">
+  <a href="https://pypi.org/project/browsermulti/"><img src="https://img.shields.io/pypi/v/browsermulti?color=blue&logo=pypi&logoColor=white" alt="PyPI Version"></a>
+  <a href="https://pypi.org/project/browsermulti/"><img src="https://img.shields.io/pypi/dm/browsermulti?color=success&logo=pypi&logoColor=white" alt="PyPI Downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/DungDT293/antidetech-browsermulti" alt="License"></a>
+</p>
+
 > **Not a patched config. Not a JavaScript injection.** BrowserMulti applies fingerprint-related changes directly at Chromium C++ source level across Blink and V8. Validate behavior in your own authorized automation and testing environments.
 
 ## 🚀 Key Highlights
@@ -38,6 +44,36 @@ Results from the extracted binary using the project benchmark suite:
 **Total: 5/5 benchmark checks passed.**
 
 > Direct command-line smoke testing on this Windows host remains sensitive to sandbox token and ACL behavior. The Playwright benchmark passed against the extracted binary; see [handoff.md](handoff.md) for full validation details and limitations.
+
+## 📦 Python SDK
+
+Install editable package from this repository:
+
+```bash
+pip install -e .
+```
+
+PyPI page: <https://pypi.org/project/browsermulti/>.
+
+```python
+import asyncio
+from browsermulti import launch_persistent_context
+
+
+async def main():
+    context = await launch_persistent_context(
+        "./profiles/profile_01",
+        headless=False,
+        proxy={"server": "socks5://127.0.0.1:1080"},
+        enable_smooth_input=True,
+    )
+    page = context.pages[0] if context.pages else await context.new_page()
+    await page.goto("https://example.com")
+    await context.close()
+
+
+asyncio.run(main())
+```
 
 ## 🛠️ Playwright Python Integration
 
