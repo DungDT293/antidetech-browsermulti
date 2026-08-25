@@ -29,3 +29,11 @@ dist/*_profile/
 cdp_profile/
 cdp_profile2/
 logs/
+
+# Chromium checkout and runtime artifacts
+.cipd/
+.gclient*
+.gcs_entries
+/dist/
+/temp_baseline/
+/test_reports/
