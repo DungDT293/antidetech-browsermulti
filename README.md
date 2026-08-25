@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">🛡️ BrowserMulti — Stealth Chromium Core</h1>
   <p align="center">
-    <strong>High-Performance Anti-Detect Chromium Core with Native C++ Patches for Playwright & CDP Automation.</strong>
+    <strong>High-performance Chromium core with native C++ patches for Playwright and CDP automation.</strong>
   </p>
 </p>
 
@@ -13,69 +13,122 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
-<br>
+> **Not a patched config. Not a JavaScript injection.** BrowserMulti applies fingerprint-related changes directly at Chromium C++ source level across Blink and V8. Validate behavior in your own authorized automation and testing environments.
 
-<table><tr><td>
-<strong>Not a patched config. Not a JS injection.</strong> BrowserMulti is a custom standalone Chromium binary with anti-fingerprint mitigations applied directly at the <strong>C++ source level (Blink DOM & V8 Engine)</strong>. Bot detection systems treat it as a legitimate organic browser — because under the hood, it <em>is</em> a real browser.
-</td></tr></table>
+## 🚀 Key Highlights
 
-<br>
+- **Native C++ engine patching:** Changes `navigator.webdriver`, plugin/mime-type defaults, User-Agent branding, Client Hints, and selected V8 Inspector behavior at source level.
+- **Playwright and CDP integration:** Supports Playwright persistent contexts and Chrome DevTools Protocol workflows. Runtime behavior depends on Playwright version, launch flags, profile, and host policy.
+- **Static non-component distribution:** `is_component_build = false` produces a static Chromium layout centered on `chrome.dll`, with Windows assembly manifest `152.0.7977.54.manifest`.
+- **Network compatibility:** Uses Chromium's native SOCKS5, HTTP/HTTPS proxy, proxy-authentication, and TLS networking stack.
+- **Automated upstream pipeline:** PowerShell pipeline detects Stable releases, fetches a single tag, syncs dependencies, applies separate Chromium/V8 patches, regenerates GN files, builds, benchmarks, and packages.
 
-## 🚀 Key Highlights & Architectural Strengths
+## 📊 Benchmark Results — v152.0.7977.54
 
-* **Native C++ Engine Patching:** Loại bỏ triệt để cờ `navigator.webdriver`, ẩn runtime getter traps của V8 Inspector và chuẩn hóa Plugin/MimeType trực tiếp trong mã nguồn C++ mà không cần chèn các đoạn script JavaScript dễ bị WAF phát hiện.
-* **100% Playwright & CDP Compatible:** Hoạt động nguyên bản với `launch_persistent_context`, hỗ trợ nạp Chrome Extension (Manifest V3), cookie persistence SQLite qua Windows DPAPI và tương thích tuyệt đối với toàn bộ API automation hiện có.
-* **Static Non-Component Distribution:** Toàn bộ engine được biên dịch tĩnh vào một khối `chrome.dll` duy nhất (444 MB) đi kèm Assembly Manifest (`152.0.7977.54.manifest`), giải quyết triệt để lỗi Windows Side-by-Side (SxS) và sẵn sàng chạy độc lập (Portable Runtime).
-* **Enterprise Network Stack:** Tích hợp SOCKS5 phân giải DNS từ xa, hỗ trợ Proxy Authentication và bảo toàn nguyên vẹn dấu vân tay mạng TLS JA4 (`t13d1517h2_8daaf6152771_cb7bf5808d99`).
-* **Automated Upstream Pipeline:** Bộ kịch bản PowerShell tự động phát hiện phiên bản Chrome Stable từ Google API, kéo single tag và ốp bản vá đa kho (Dual-repo patching) định kỳ.
+Results from the extracted binary using the project benchmark suite:
 
----
+| Detection or network test | Result | Detail |
+| :--- | :---: | :--- |
+| **Google reCAPTCHA v3** | **PASS** | Score: `0.9` |
+| **Cloudflare Turnstile** | **PASS** | Resolved; token generated |
+| **Sannysoft Detection Suite** | **PASS** | WebDriver missing, Chrome present, Plugins=5 |
+| **TLS fingerprint** | **PASS** | JA4: `t13d1517h2_8daaf6152771_cb7bf5808d99`; HTTP/2 |
+| **DeviceAndBrowserInfo** | **PASS** | `isBot=false` |
 
-## 📊 Benchmark & Verification Results (v152.0.7977.54)
+**Total: 5/5 benchmark checks passed.**
 
-Toàn bộ các bài kiểm thử được xác thực thực tế trên bản phân phối nhị phân độc lập (Extracted Standalone Binary):
+> Direct command-line smoke testing on this Windows host remains sensitive to sandbox token and ACL behavior. The Playwright benchmark passed against the extracted binary; see [handoff.md](handoff.md) for full validation details and limitations.
 
-| Detection Engine / Security Suite | Stock Playwright | BrowserMulti Core | Technical Assessment |
-| :--- | :---: | :---: | :--- |
-| **Google reCAPTCHA v3** | `0.1` (Bot) | **`0.9` (Human)** | Server-side verified (Điểm số tối đa) |
-| **Cloudflare Turnstile** | FAIL / Timeout | **RESOLVED** | Vượt qua bài kiểm tra tương tác |
-| **Sannysoft Bot Test** | 4 Fails | **ALL PASS** | WebDriver missing, Chrome present, Plugins=5 |
-| **deviceandbrowserinfo.com** | `isBot: true` | **`isBot: false`** | 0 true flags / Normal User Agent |
-| **TLS Fingerprint (JA4)** | Mismatched | **MATCHED** | `t13d1517h2_8daaf6152771_cb7bf5808d99` |
-| **`window.chrome` & Runtime** | Leaked / Null | **`object`** | Khớp hoàn toàn với Google Chrome chuẩn |
-| **CDP Automation Signals** | Detected | **Undetected** | `isAutomatedWithCDP: false` |
+## 🛠️ Playwright Python Integration
 
----
-
-## 🛠️ Quick Start & Integration (Playwright Python)
-
-Bạn không cần thay đổi cấu trúc automation hiện tại. Chỉ cần trỏ `executable_path` vào binary BrowserMulti:
+Point `executable_path` at the BrowserMulti binary:
 
 ```python
 import asyncio
 from playwright.async_api import async_playwright
 
+
 async def main():
     async with async_playwright() as p:
-        # Khởi chạy Persistent Context với lõi BrowserMulti
         context = await p.chromium.launch_persistent_context(
             user_data_dir="./profiles/profile_01",
-            executable_path="D:/dichchrome/dist/browsermulti-152.0.7977.54-win64/chrome.exe",
+            executable_path=(
+                "D:/dichchrome/dist/"
+                "browsermulti-152.0.7977.54-win64/chrome.exe"
+            ),
             headless=False,
             args=[
                 "--no-first-run",
                 "--no-default-browser-check",
                 "--disable-blink-features=AutomationControlled",
-                "--proxy-bypass-list=<-loopback>" # Chống nghẽn CDP qua proxy
+                "--proxy-bypass-list=<-loopback>",
             ],
-            # Hỗ trợ Proxy HTTP / SOCKS5 chuẩn
-            # proxy={"server": "socks5://127.0.0.1:1080", "username": "user", "password": "pass"}
         )
-        
         page = context.pages[0] if context.pages else await context.new_page()
-        await page.goto("[https://antcpt.com/score_detector/](https://antcpt.com/score_detector/)")
+        await page.goto("https://antcpt.com/score_detector/")
         await asyncio.sleep(10)
         await context.close()
 
+
 if __name__ == "__main__":
     asyncio.run(main())
+```
+
+Use only against systems and sites where you have authorization. Do not use BrowserMulti to bypass access controls, fraud controls, or third-party protections without permission.
+
+## 🔄 Automated Sync and Build
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ./auto_sync_and_build.ps1
+```
+
+The pipeline can reset the Chromium source tree with `git checkout .` and `git clean -df`, sync dependencies, and run a long build. Back up local source changes and confirm disk space before execution. The script uses:
+
+- Version-aware Stable version selection.
+- Single-tag shallow fetch.
+- `gclient.bat` dependency sync.
+- Independent Chromium-root and V8 patch application.
+- GN regeneration before Ninja.
+- Strict runtime packaging with manifest/XML files.
+
+## 🧩 Repository Layout
+
+| Path | Purpose |
+| :--- | :--- |
+| `BrowserMulti_chromium_v154.patch` | Chromium-root Blink, branding, UA, plugin, and search patches |
+| `BrowserMulti_v8_v154.patch` | V8 Inspector patch |
+| `auto_sync_and_build.ps1` | Stable sync, patch, build, benchmark, and package pipeline |
+| `auto_benchmark.js` | Playwright benchmark suite |
+| `handoff.md` | Architecture notes, failure history, validation status, and operational lessons |
+| `current_version.txt` | Last recorded Stable version |
+
+## 📦 Release Artifact
+
+Current local artifact:
+
+```text
+D:\dichchrome\dist\browsermulti-152.0.7977.54-win64.zip
+```
+
+- Size: `252,757,503 bytes` (`241.05 MB`).
+- Build: Static x64, `is_component_build = false`.
+- Manifest: `152.0.7977.54.manifest`.
+
+Create a GitHub release at:
+
+<https://github.com/DungDT293/antidetech-browsermulti/releases/new>
+
+- **Tag:** `v152.0.7977.54`
+- **Title:** `BrowserMulti v152.0.7977.54 - Static Release`
+- **Description:** `Static non-component Chromium build with native Blink/V8 patches; benchmark suite 5/5 PASS.`
+- **Asset:** `browsermulti-152.0.7977.54-win64.zip`
+
+## 🏷️ Suggested Repository Metadata
+
+**Description:** High-performance Chromium core with native V8/Blink C++ patches for authorized Playwright and CDP testing.
+
+**Topics:** `chromium`, `playwright`, `cdp`, `blink`, `v8`, `chromium-build`, `cpp`, `browser-automation`
+
+## 📄 License
+
+This project contains Chromium-derived source and patches. Review Chromium's license and notices in the source tree before redistribution. Project-specific scripts and documentation are MIT-licensed unless stated otherwise.
