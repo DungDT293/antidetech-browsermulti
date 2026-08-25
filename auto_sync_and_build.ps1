@@ -209,6 +209,7 @@ try {
         Invoke-Checked 'git' @('apply', '--3way', '--ignore-whitespace', $ChromiumPatch) 'Apply Chromium patch' $Src
         Invoke-Checked 'git' @('apply', '--3way', '--ignore-whitespace', $V8Patch) 'Apply V8 patch' (Join-Path $Src 'v8')
         $env:PATH = '{0};{1}' -f $DepotTools, $env:PATH
+        Invoke-Checked 'gn.bat' @('gen', 'out\Default') 'Regenerate GN build files' $Src
         Invoke-Checked 'autoninja' @('-C', 'out\Default', 'chrome') 'Build BrowserMulti' $Src
         Invoke-Checked 'node' @($Benchmark) 'Run BrowserMulti benchmark' $Root
         Write-Log ("DRY-RUN: Set-Content {0} = {1}" -f $VersionFile, $latestVersion)
@@ -246,6 +247,7 @@ try {
     }
 
     $env:PATH = '{0};{1}' -f $DepotTools, $env:PATH
+    Invoke-Checked 'gn.bat' @('gen', 'out\Default') 'Regenerate GN build files' $Src
     Invoke-Checked 'autoninja' @('-C', 'out\Default', 'chrome') 'Build BrowserMulti' $Src
     Invoke-Checked 'node' @($Benchmark) 'Run BrowserMulti benchmark' $Root
 
@@ -289,6 +291,12 @@ try {
         $sourceDirectory = Join-Path $buildOutput $directory
         if (Test-Path -LiteralPath $sourceDirectory) {
             Copy-Item -LiteralPath $sourceDirectory -Destination (Join-Path $stagingDir $directory) -Recurse -Force
+        }
+    }
+    # Copy assembly manifests and XML identity files required by Windows SxS.
+    foreach ($pattern in @('*.manifest', '*.xml')) {
+        Get-ChildItem -LiteralPath $buildOutput -Filter $pattern -File | ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination $stagingDir -Force
         }
     }
     if (Test-Path -LiteralPath $releaseZip) {
