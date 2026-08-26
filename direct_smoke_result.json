@@ -2,19 +2,20 @@
   "version": "152.0.7977.65",
   "executable": "D:\\dichchrome\\dist\\browsermulti-152.0.7977.65-win64\\chrome.exe",
   "arguments": [
-    "--user-data-dir=D:\\dichchrome\\temp_smoke_profile",
     "--headless=new",
-    "--remote-debugging-port=0",
+    "--user-data-dir=D:\\dichchrome\\temp_smoke_profile",
     "--no-first-run",
     "--no-default-browser-check",
-    "data:text/html,<title>DirectSmokePass</title>"
+    "--dump-dom",
+    "data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3EDirect%20Smoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E"
   ],
   "profile": "D:\\dichchrome\\temp_smoke_profile",
   "started": true,
-  "graceful_close": false,
-  "forced_close": false,
-  "timed_out": false,
   "exit_code": -2147483645,
+  "stdout_contains_title": false,
+  "stdout_contains_body": false,
   "cleanup": true,
-  "verdict": "FAIL_EXIT_CODE"
+  "verdict": "FAIL_EXIT_CODE",
+  "stderr_preview": "Sandbox access failure: Access is denied (0x5); STATUS_BREAKPOINT (0x80000003).",
+  "retry_note": "Self-terminating --dump-dom retry still requires sandbox access; no PASS claimed."
 }

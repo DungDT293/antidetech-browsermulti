@@ -4,20 +4,27 @@
   "proxy_configured": false,
   "candidates": [
     {
-      "candidate": "candidate:3495480177 1 udp 2113937151 84121ee1-db5b-4b31-b2e9-100762138cfc.local 53823 typ host generation 0 ufrag MA6Z network-cost 999",
+      "candidate": "candidate:2978373382 1 udp 2113937151 a91399c6-fe57-4a99-be8c-57da27779fe0.local 57285 typ host generation 0 ufrag yfFz network-cost 999",
       "sdpMid": "0",
       "sdpMLineIndex": 0,
-      "usernameFragment": "MA6Z"
+      "usernameFragment": "yfFz"
     },
     {
-      "candidate": "candidate:3332787359 1 udp 2113939711 95b4b97a-2fe6-4642-b7af-bea83fea72cb.local 53824 typ host generation 0 ufrag MA6Z network-cost 999",
+      "candidate": "candidate:4129451774 1 udp 2113939711 145f6a5f-b81f-40ff-bd41-82bb6710dd3b.local 57286 typ host generation 0 ufrag yfFz network-cost 999",
       "sdpMid": "0",
       "sdpMLineIndex": 0,
-      "usernameFragment": "MA6Z"
+      "usernameFragment": "yfFz"
     }
   ],
   "private_addresses": [],
-  "public_addresses": [],
+  "public_addresses": [
+    "a91399c6-fe57-4a99-be8c-57da27779fe0.local",
+    "145f6a5f-b81f-40ff-bd41-82bb6710dd3b.local"
+  ],
   "gathering_complete": true,
-  "verdict": "PASS_NO_PRIVATE_ADDRESS_EXPOSED"
+  "verdict": "PASS_NO_PRIVATE_ADDRESS_EXPOSED",
+  "candidate_addresses": [
+    "a91399c6-fe57-4a99-be8c-57da27779fe0.local",
+    "145f6a5f-b81f-40ff-bd41-82bb6710dd3b.local"
+  ]
 }

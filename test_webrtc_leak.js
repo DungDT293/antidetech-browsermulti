@@ -60,7 +60,7 @@ function isPrivateIp(ip) {
       return match ? match[1] : null;
     }).filter(Boolean))];
     result.private_addresses = addresses.filter(isPrivateIp);
-    result.public_addresses = addresses.filter(ip => !isPrivateIp(ip));
+    result.public_addresses = addresses.filter(ip => !isPrivateIp(ip) && !ip.toLowerCase().endsWith('.local'));
     result.candidate_addresses = addresses;
     if (!result.gathering_complete) result.verdict = 'INCONCLUSIVE';
     else if (result.private_addresses.length) result.verdict = 'FAIL_PRIVATE_ADDRESS_EXPOSED';

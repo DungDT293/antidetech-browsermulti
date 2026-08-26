@@ -6,13 +6,15 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$stdoutFile = Join-Path $env:TEMP 'browsermulti-direct-smoke.stdout.txt'
+$stderrFile = Join-Path $env:TEMP 'browsermulti-direct-smoke.stderr.txt'
 $arguments = @(
-    "--user-data-dir=$Profile",
     '--headless=new',
-    '--remote-debugging-port=0',
+    "--user-data-dir=$Profile",
     '--no-first-run',
     '--no-default-browser-check',
-    'data:text/html,<title>DirectSmokePass</title>'
+    '--dump-dom',
+    'data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3EDirect%20Smoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E'
 )
 $result = [ordered]@{
     version = '152.0.7977.65'
@@ -20,10 +22,9 @@ $result = [ordered]@{
     arguments = $arguments
     profile = $Profile
     started = $false
-    graceful_close = $false
-    forced_close = $false
-    timed_out = $false
     exit_code = $null
+    stdout_contains_title = $false
+    stdout_contains_body = $false
     cleanup = $false
     verdict = 'INCONCLUSIVE'
 }
@@ -32,33 +33,33 @@ try {
     if (-not (Test-Path -LiteralPath $Executable -PathType Leaf)) {
         throw "Missing executable: $Executable"
     }
+    foreach ($file in @($stdoutFile, $stderrFile)) {
+        if (Test-Path -LiteralPath $file) {
+            Remove-Item -LiteralPath $file -Force
+        }
+    }
     if (Test-Path -LiteralPath $Profile) {
         Remove-Item -LiteralPath $Profile -Recurse -Force
     }
     New-Item -ItemType Directory -Path $Profile -Force | Out-Null
-    $process = Start-Process -FilePath $Executable -ArgumentList $arguments -PassThru
+
+    $process = Start-Process -FilePath $Executable -ArgumentList $arguments -NoNewWindow -PassThru -Wait `
+        -RedirectStandardOutput $stdoutFile -RedirectStandardError $stderrFile
     $result.started = $true
-    Start-Sleep -Seconds 3
-    if (-not $process.HasExited) {
-        if ($process.CloseMainWindow()) {
-            $result.graceful_close = $true
-        }
-        if (-not $process.WaitForExit(10000)) {
-            $result.timed_out = $true
-            Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
-            $result.forced_close = $true
-            $process.WaitForExit(5000)
-        }
-    }
-    if ($process.HasExited) {
-        $result.exit_code = $process.ExitCode
-        if ($result.exit_code -eq 0) {
-            $result.verdict = 'PASS'
-        } else {
-            $result.verdict = 'FAIL_EXIT_CODE'
-        }
+    $result.exit_code = $process.ExitCode
+    $stdout = if (Test-Path -LiteralPath $stdoutFile) { Get-Content -LiteralPath $stdoutFile -Raw } else { '' }
+    $stderr = if (Test-Path -LiteralPath $stderrFile) { Get-Content -LiteralPath $stderrFile -Raw } else { '' }
+    $result.stdout_contains_title = $stdout -match 'DirectSmokePass'
+    $result.stdout_contains_body = $stdout -match 'Direct Smoke Test OK'
+    $normalizedStderr = ($stderr -replace '\s+', ' ').Trim()
+    $result.stderr_preview = $normalizedStderr.Substring(0, [Math]::Min(500, $normalizedStderr.Length))
+    $result.output_nonempty = -not [string]::IsNullOrWhiteSpace($stdout)
+    if ($result.exit_code -eq 0 -and $result.output_nonempty) {
+        $result.verdict = 'PASS'
+    } elseif ($result.exit_code -eq 0) {
+        $result.verdict = 'FAIL_OUTPUT'
     } else {
-        $result.verdict = 'INCONCLUSIVE_TIMEOUT'
+        $result.verdict = 'FAIL_EXIT_CODE'
     }
 } catch {
     $result.error = $_.Exception.Message
@@ -68,6 +69,11 @@ try {
         Remove-Item -LiteralPath $Profile -Recurse -Force -ErrorAction SilentlyContinue
     }
     $result.cleanup = -not (Test-Path -LiteralPath $Profile)
+    foreach ($file in @($stdoutFile, $stderrFile)) {
+        if (Test-Path -LiteralPath $file) {
+            Remove-Item -LiteralPath $file -Force -ErrorAction SilentlyContinue
+        }
+    }
     $result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $Output -Encoding UTF8
 }
 
