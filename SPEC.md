@@ -1,4 +1,5 @@
 # SPEC — Ma trận 7 tầng kiểm tra trình duyệt (đối thủ: Akamai, Cloudflare, DataDome, Kasada, HUMAN/PerimeterX, F5 Shape, Arkose Labs, reCAPTCHA Enterprise)
+> `v154 Research Phase (Historical POC)` contains historical research notes. `v152.0.7977.65 (Canonical Stable Distribution)` is current release identity. Current claims require current-version evidence.
 > Bản đặc tả mục tiêu chính thức của BrowserMulti. Đối chiếu trạng thái với DEVLOG.md §6.
 > **Cập nhật 2026-08-22:**
 > - GIAI ĐOẠN 1 (CDP HARDENING) HOÀN THÀNH — deviceandbrowserinfo.com trả về isBot=false ngay cả khi drive bằng Playwright.
@@ -14,7 +15,7 @@
 | ALPN h2/http1.1 | ✅ | Verify http_version=h2 |
 | HTTP/2 SETTINGS/PRIORITY/WINDOW_UPDATE (Akamai fp) | ✅ | akamai_hash=`52d84b11...` có mặt, ja4 trùng Chrome h2 (verify qua tls.peet.ws) |
 | TCP/IP p0f (window/TTL=128/DF/MSS) | ✅ | Stack Windows thật |
-| WebRTC ICE/SRTP/DTLS | ⚠️ chưa test; lưu ý rò rỉ local IP khi dùng proxy |
+| WebRTC ICE/SRTP/DTLS | ✅ VERIFIED PASS (direct, mDNS host candidates) | `.65` run completed ICE gathering; no private/public literal IP exposed. Proxy mode not tested in this run; validate proxy policy separately. |
 | ECH / DoH mặc định | ⚠️ cần bật flag như Chrome ổn định |
 
 ## Tầng 2 — V8 Execution Environment
@@ -86,7 +87,7 @@
 | History/Bookmark tự nhiên | ⚠️ Người dùng tự nuôi |
 | Cookie dài hạn NID/AEC/SID, __cf_bm/cf_clearance | ✅ Profile giữ cookie vĩnh viễn |
 | Private State Tokens | ✅ Upstream hỗ trợ |
-| Release lifecycle consistency | ✅ Version thật từ trunk (154) |
+| Release lifecycle consistency | ✅ `v152.0.7977.65` is canonical; v154 notes are historical POC |
 
 ---
 

@@ -1,0 +1,23 @@
+{
+  "version": "152.0.7977.65",
+  "executable": "D:\\dichchrome\\dist\\browsermulti-152.0.7977.65-win64\\chrome.exe",
+  "proxy_configured": false,
+  "candidates": [
+    {
+      "candidate": "candidate:3495480177 1 udp 2113937151 84121ee1-db5b-4b31-b2e9-100762138cfc.local 53823 typ host generation 0 ufrag MA6Z network-cost 999",
+      "sdpMid": "0",
+      "sdpMLineIndex": 0,
+      "usernameFragment": "MA6Z"
+    },
+    {
+      "candidate": "candidate:3332787359 1 udp 2113939711 95b4b97a-2fe6-4642-b7af-bea83fea72cb.local 53824 typ host generation 0 ufrag MA6Z network-cost 999",
+      "sdpMid": "0",
+      "sdpMLineIndex": 0,
+      "usernameFragment": "MA6Z"
+    }
+  ],
+  "private_addresses": [],
+  "public_addresses": [],
+  "gathering_complete": true,
+  "verdict": "PASS_NO_PRIVATE_ADDRESS_EXPOSED"
+}

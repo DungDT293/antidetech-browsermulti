@@ -14,6 +14,11 @@ BrowserMulti is an experimental Chromium distribution for authorized browser aut
 
 Results below are recorded test scenarios, not universal guarantees. Do not use BrowserMulti to bypass access controls, fraud controls, CAPTCHAs, WAFs, or third-party protections without authorization.
 
+## Release labels
+
+- `v154 Research Phase (Historical POC)`: historical CDP/fingerprint research notes only.
+- `v152.0.7977.65 (Canonical Stable Distribution)`: current static Windows x64 build and SDK.
+
 ## Current release
 
 | Item | Value |
@@ -37,7 +42,7 @@ The `.65` static build completed with exit code `0`. Playwright benchmark comple
 | TLS | JA4 `t13d1517h2_8daaf6152771_cb7bf5808d99`, HTTP/2 |
 | DeviceAndBrowserInfo | `isBot=false` |
 
-Evidence: [`docs/validation-152.0.7977.65.json`](docs/validation-152.0.7977.65.json) and [`docs/validation.md`](docs/validation.md). Direct extracted CLI smoke remains a separate gate and is not marked PASS without a clean process exit code.
+Evidence: [`docs/validation-152.0.7977.65.json`](docs/validation-152.0.7977.65.json) and [`docs/validation.md`](docs/validation.md). WebRTC direct run: VERIFIED PASS for no literal private/public IP candidates; proxy mode remains separate. Direct extracted CLI smoke: FAIL with exit code `-2147483645`; not release PASS.
 
 ## Install SDK
 

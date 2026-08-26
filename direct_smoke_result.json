@@ -1,0 +1,20 @@
+{
+  "version": "152.0.7977.65",
+  "executable": "D:\\dichchrome\\dist\\browsermulti-152.0.7977.65-win64\\chrome.exe",
+  "arguments": [
+    "--user-data-dir=D:\\dichchrome\\temp_smoke_profile",
+    "--headless=new",
+    "--remote-debugging-port=0",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "data:text/html,<title>DirectSmokePass</title>"
+  ],
+  "profile": "D:\\dichchrome\\temp_smoke_profile",
+  "started": true,
+  "graceful_close": false,
+  "forced_close": false,
+  "timed_out": false,
+  "exit_code": -2147483645,
+  "cleanup": true,
+  "verdict": "FAIL_EXIT_CODE"
+}

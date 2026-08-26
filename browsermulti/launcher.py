@@ -66,7 +66,7 @@ async def launch_persistent_context(
         headless=headless,
         args=launch_args,
         proxy=proxy_config,
-        viewport=viewport or {"width": 1280, "height": 800},
+        viewport=viewport,
         locale=locale,
         timezone_id=timezone_id,
         **kwargs,

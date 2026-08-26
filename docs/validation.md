@@ -38,4 +38,9 @@ The static `.65` build completed with exit code `0`. Playwright benchmark comple
 - TLS JA4: `t13d1517h2_8daaf6152771_cb7bf5808d99`, HTTP/2.
 - DeviceAndBrowserInfo: `isBot=false`.
 
-The `.65` runtime ZIP is `D:\dichchrome\dist\browsermulti-152.0.7977.65-win64.zip`. Direct extracted CLI smoke remains a separate gate and is not marked PASS here without a clean exit-code result.
+The `.65` runtime ZIP is `D:\dichchrome\dist\browsermulti-152.0.7977.65-win64.zip`.
+
+## P0 validation update
+
+- WebRTC direct ICE run: `VERIFIED PASS` for completed gathering with mDNS host candidates and no literal private/public IP addresses. Proxy mode remains untested.
+- Direct extracted CLI smoke: `FAIL_EXIT_CODE`, process exit code `-2147483645`; cleanup completed. This is not a release PASS.
