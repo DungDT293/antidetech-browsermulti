@@ -10,14 +10,15 @@ Set-StrictMode -Version Latest
 
 $Src = Join-Path $Root 'src'
 $PatchDir = 'D:\dichchrome_private_patches'
-$ChromiumPatch = Join-Path $PatchDir 'BrowserMulti_chromium_v154.patch'
-$V8Patch = Join-Path $PatchDir 'BrowserMulti_v8_v154.patch'
+$ChromiumPatch = Join-Path $PatchDir 'BrowserMulti_chromium_v152.patch'
+$V8Patch = Join-Path $PatchDir 'BrowserMulti_v8_v152.patch'
 $Benchmark = Join-Path $Root 'auto_benchmark.js'
 $DepotTools = Join-Path $Root 'depot_tools'
 $VersionFile = Join-Path $Root 'current_version.txt'
 $Dist = Join-Path $Root 'dist'
 $LogDir = Join-Path $Root 'logs'
 $ApiUrl = 'https://versionhistory.googleapis.com/v1/chrome/platforms/win/channels/stable/versions'
+$env:DEPOT_TOOLS_WIN_TOOLCHAIN = '0'
 
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 $LogPath = Join-Path $LogDir ('auto-sync-build-{0}.log' -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
@@ -206,7 +207,7 @@ try {
             Write-Log "Tag $latestVersion already exists locally; skipping network fetch." -Level 'SUCCESS'
         }
         Invoke-Checked 'git' @('checkout', ('tags/{0}' -f $latestVersion)) 'Checkout Stable tag' $Src
-        Invoke-Checked 'gclient.bat' @('sync', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
+        Invoke-Checked 'gclient.bat' @('sync', '--reset', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
         Invoke-Checked 'git' @('apply', '--3way', '--ignore-whitespace', $ChromiumPatch) 'Apply Chromium patch' $Src
         Invoke-Checked 'git' @('apply', '--3way', '--ignore-whitespace', $V8Patch) 'Apply V8 patch' (Join-Path $Src 'v8')
         $env:PATH = '{0};{1}' -f $DepotTools, $env:PATH
@@ -229,7 +230,7 @@ try {
     Invoke-Checked 'git' @('checkout', ('tags/{0}' -f $latestVersion)) 'Checkout Stable tag' $Src
     $env:PATH = '{0};{1}' -f $DepotTools, $env:PATH
     Assert-Path (Join-Path $DepotTools 'gclient.bat') 'gclient command'
-    Invoke-Checked 'gclient.bat' @('sync', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
+    Invoke-Checked 'gclient.bat' @('sync', '--reset', '--with_branch_heads', '--with_tags', '-D') 'Sync Chromium dependencies' $Src
 
     Write-Log 'Applying BrowserMulti patch.'
     try {
