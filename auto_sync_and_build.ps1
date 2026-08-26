@@ -9,8 +9,9 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $Src = Join-Path $Root 'src'
-$ChromiumPatch = Join-Path $Root 'BrowserMulti_chromium_v154.patch'
-$V8Patch = Join-Path $Root 'BrowserMulti_v8_v154.patch'
+$PatchDir = 'D:\dichchrome_private_patches'
+$ChromiumPatch = Join-Path $PatchDir 'BrowserMulti_chromium_v154.patch'
+$V8Patch = Join-Path $PatchDir 'BrowserMulti_v8_v154.patch'
 $Benchmark = Join-Path $Root 'auto_benchmark.js'
 $DepotTools = Join-Path $Root 'depot_tools'
 $VersionFile = Join-Path $Root 'current_version.txt'

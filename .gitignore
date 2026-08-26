@@ -43,3 +43,4 @@ logs/
 /temp_baseline/
 /test_reports/
 *.patch
+/docs/*.local.md
