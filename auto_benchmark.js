@@ -2,9 +2,11 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const EXECUTABLE = 'D:\\dichchrome\\src\\out\\Default\\chrome.exe';
-const USER_DATA = 'D:\\dichchrome\\user_data';
-const REPORT_DIR = 'D:\\dichchrome\\test_reports';
+const ROOT = process.env.BROWSERMULTI_ROOT || 'D:\\dichchrome';
+const VERSION = JSON.parse(fs.readFileSync(path.join(ROOT, 'version.json'), 'utf8')).version;
+const EXECUTABLE = process.env.BROWSERMULTI_EXECUTABLE || path.join(ROOT, 'src', 'out', 'Default', 'chrome.exe');
+const USER_DATA = process.env.BROWSERMULTI_USER_DATA || path.join(ROOT, 'user_data', VERSION);
+const REPORT_DIR = process.env.BROWSERMULTI_REPORT_DIR || path.join(ROOT, 'test_reports', VERSION);
 const SHOT_DIR = path.join(REPORT_DIR, 'screenshots');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

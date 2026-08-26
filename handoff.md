@@ -1,5 +1,13 @@
 # BrowserMulti Handoff
 
+## Current state — 2026-08-26
+
+- Canonical metadata: `version.json`.
+- `.65` static build completed with exit code `0`.
+- `.65` package: `D:\dichchrome\dist\browsermulti-152.0.7977.65-win64.zip`.
+- `.65` Playwright benchmark: `5/5 PASS`, exit code `0`.
+- Detailed remediation plan: `docs\p0-p1-p2-remediation-plan.md`.
+
 ## Current state — 2026-08-25
 
 - Stable source target: `152.0.7977.54`.

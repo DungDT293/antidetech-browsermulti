@@ -1,0 +1,32 @@
+﻿[
+  {
+    "name": "reCAPTCHA v3 score",
+    "detail": "score=0.9",
+    "pass": true,
+    "shot": "D:\\dichchrome\\test_reports\\152.0.7977.65\\screenshots\\1_recaptcha_v3.png"
+  },
+  {
+    "name": "Cloudflare Turnstile",
+    "detail": "resolved (token 21 chars)",
+    "pass": true,
+    "shot": "D:\\dichchrome\\test_reports\\152.0.7977.65\\screenshots\\2_turnstile.png"
+  },
+  {
+    "name": "bot.sannysoft.com checks",
+    "detail": "WebDriver=missing (passed), Chrome=present (passed), Permissions=prompt, Plugins=5",
+    "pass": true,
+    "shot": "D:\\dichchrome\\test_reports\\152.0.7977.65\\screenshots\\3_sannysoft.png"
+  },
+  {
+    "name": "TLS fingerprint (JA3/JA4)",
+    "detail": "ja3_hash=f9778b324ee7f311608e87d5ae38877b ja4=t13d1517h2_8daaf6152771_cb7bf5808d99 http_version=h2",
+    "pass": true,
+    "shot": "D:\\dichchrome\\test_reports\\152.0.7977.65\\screenshots\\4_tls.png"
+  },
+  {
+    "name": "deviceandbrowserinfo.com isBot",
+    "detail": "isBot=false",
+    "pass": true,
+    "shot": "D:\\dichchrome\\test_reports\\152.0.7977.65\\screenshots\\6_deviceinfo.png"
+  }
+]

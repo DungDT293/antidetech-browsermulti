@@ -27,3 +27,15 @@ A Playwright benchmark PASS does not erase a failed or inconclusive direct CLI s
 ## Current update
 
 The watcher detected Chrome `152.0.7977.65` on 2026-08-26 and started source reset, cleanup, and single-tag fetch. Final build, benchmark, and release status must be appended after the pipeline exits.
+
+## Recorded .65 benchmark
+
+The static `.65` build completed with exit code `0`. Playwright benchmark completed with exit code `0` and recorded 5/5 PASS:
+
+- reCAPTCHA v3: `0.9`.
+- Cloudflare Turnstile: resolved.
+- Sannysoft: WebDriver missing, Chrome present, Plugins=5.
+- TLS JA4: `t13d1517h2_8daaf6152771_cb7bf5808d99`, HTTP/2.
+- DeviceAndBrowserInfo: `isBot=false`.
+
+The `.65` runtime ZIP is `D:\dichchrome\dist\browsermulti-152.0.7977.65-win64.zip`. Direct extracted CLI smoke remains a separate gate and is not marked PASS here without a clean exit-code result.
