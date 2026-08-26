@@ -12,7 +12,6 @@ setup(
     name="browsermulti",
     version=VERSION,
     packages=find_packages(),
-    data_files=[("", ["version.json"])],
     install_requires=["playwright>=1.40.0"],
     author="DungDT293",
     description="BrowserMulti Custom Chromium Automation SDK for Playwright",

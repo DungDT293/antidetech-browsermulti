@@ -10,6 +10,7 @@ _VERSION_FILE = _REPO_ROOT / "version.json"
 
 from playwright.async_api import BrowserContext, Page, async_playwright
 
+from browsermulti.downloader import cache_dir, ensure_binary, get_version, release_url
 from browsermulti.input_helper import SmoothInputController
 
 
@@ -22,28 +23,38 @@ def _read_version() -> str:
         ) from exc
 
 
+def _checked_path(path: Union[str, Path]) -> Path:
+    resolved = Path(path).expanduser()
+    if not resolved.is_file():
+        raise FileNotFoundError(f"BrowserMulti executable does not exist: {resolved}")
+    return resolved.resolve()
+
+
 def _resolve_executable_path(executable_path: Optional[Union[str, Path]]) -> Path:
     if executable_path is not None:
-        path = Path(executable_path).expanduser()
-    else:
-        configured = os.environ.get("BROWSERMULTI_EXECUTABLE")
-        if configured:
-            path = Path(configured).expanduser()
-        else:
-            version = _read_version()
-            path = (
-                _REPO_ROOT
-                / "dist"
-                / f"browsermulti-{version}-win64"
-                / "chrome.exe"
-            )
-    if not path.is_file():
+        return _checked_path(executable_path)
+
+    configured = os.environ.get("BROWSERMULTI_EXECUTABLE")
+    if configured:
+        return _checked_path(configured)
+
+    version = _read_version()
+    cached = cache_dir(version) / "chrome.exe"
+    if cached.is_file():
+        return cached.resolve()
+
+    packaged = _REPO_ROOT / "dist" / f"browsermulti-{version}-win64" / "chrome.exe"
+    if packaged.is_file():
+        return packaged.resolve()
+
+    try:
+        return _checked_path(ensure_binary())
+    except (FileNotFoundError, RuntimeError) as exc:
         raise FileNotFoundError(
             "BrowserMulti executable not found. Set executable_path, set "
-            f"BROWSERMULTI_EXECUTABLE, or extract the versioned runtime under "
-            f"{_REPO_ROOT / 'dist'}. Resolved path: {path}"
-        )
-    return path
+            "BROWSERMULTI_EXECUTABLE, extract the versioned runtime under "
+            f"{_REPO_ROOT / 'dist'}, or allow download from {release_url(version)}."
+        ) from exc
 
 
 async def launch_persistent_context(

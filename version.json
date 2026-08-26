@@ -1,8 +1,8 @@
 {
-  "version": "152.0.7977.54",
+  "version": "152.0.7977.65",
   "chromium_milestone": 152,
-  "chromium_tag": "152.0.7977.54",
+  "chromium_tag": "152.0.7977.65",
   "architecture": "x64",
   "platform": "win64",
-  "release_artifact": "browsermulti-152.0.7977.54-win64.zip"
+  "release_artifact": "browsermulti-152.0.7977.65-win64.zip"
 }
