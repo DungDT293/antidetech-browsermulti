@@ -6,17 +6,17 @@ Chromium root and V8 are separate Git repositories:
 
 - Chromium source: `D:\dichchrome\src`
 - V8 sub-repository: `D:\dichchrome\src\v8`
-- Chromium patch: `D:\dichchrome_private_patches\BrowserMulti_chromium_v154.patch`
-- V8 patch: `D:\dichchrome_private_patches\BrowserMulti_v8_v154.patch`
+- Chromium patch: `<private-patch-dir>\BrowserMulti_chromium_v152.patch`
+- V8 patch: `<private-patch-dir>\BrowserMulti_v8_v152.patch`
 
 Apply patches independently:
 
 ```powershell
 Push-Location D:\dichchrome\src
-git apply --3way --ignore-whitespace D:\dichchrome_private_patches\BrowserMulti_chromium_v154.patch
+git apply --3way --ignore-whitespace <private-patch-dir>\BrowserMulti_chromium_v152.patch
 Pop-Location
 Push-Location D:\dichchrome\src\v8
-git apply --3way --ignore-whitespace D:\dichchrome_private_patches\BrowserMulti_v8_v154.patch
+git apply --3way --ignore-whitespace <private-patch-dir>\BrowserMulti_v8_v152.patch
 Pop-Location
 ```
 

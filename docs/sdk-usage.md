@@ -3,7 +3,25 @@
 ## Install
 
 ```powershell
-python -m pip install browsermulti
+py -3.11 -m pip install --upgrade browsermulti
+```
+
+Package version: `152.0.7977.65`.
+
+When no executable path is configured, SDK downloads matching runtime from GitHub Releases into:
+
+```text
+~/.browsermulti/bin/152.0.7977.65/chrome.exe
+```
+
+Resolution order: explicit `executable_path`, `BROWSERMULTI_EXECUTABLE`, cached/downloaded runtime, then source-checkout `dist/` fallback.
+
+Automatic download requires the matching GitHub Release ZIP asset to be published.
+
+Environment override:
+
+```powershell
+$env:BROWSERMULTI_EXECUTABLE = 'C:\Browsers\BrowserMulti\chrome.exe'
 ```
 
 For local development:

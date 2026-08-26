@@ -26,7 +26,7 @@ A Playwright benchmark PASS does not erase a failed or inconclusive direct CLI s
 
 ## Current update
 
-The watcher detected Chrome `152.0.7977.65` on 2026-08-26 and started source reset, cleanup, and single-tag fetch. Final build, benchmark, and release status must be appended after the pipeline exits.
+The watcher detected Chrome `152.0.7977.65` on 2026-08-26. The `.65` build and benchmark completed; see the recorded section below.
 
 ## Recorded .65 benchmark
 

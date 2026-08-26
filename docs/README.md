@@ -10,9 +10,13 @@ Documentation index for BrowserMulti Chromium builds and Python SDK.
 - [Security and IP](security-and-ip.md) — Secrets, profiles, patch confidentiality, release hygiene.
 - [Operations](operations.md) — Watcher, Scheduled Task, logs, failure handling.
 - [Validation](validation.md) — Benchmark evidence, smoke-test limits, and reporting rules.
+- [Release Checklist](release-checklist.md) — Metadata, build, SDK, release, and repository hygiene gates.
 
-## Current target
+## Current release
 
-- Chromium: `152.0.7977.65` when upstream pipeline completes.
-- Previous verified build: `152.0.7977.54`.
-- Private patch directory: `D:\dichchrome_private_patches`.
+- BrowserMulti/Chromium: `152.0.7977.65`.
+- Git tag: `v152.0.7977.65`.
+- Runtime asset: `browsermulti-152.0.7977.65-win64.zip`.
+- SDK cache: `~/.browsermulti/bin/152.0.7977.65/chrome.exe`.
+- Private patch directory: configured outside public Git, commonly `D:\dichchrome_private_patches`.
+- Release validation: `.65` build exit code `0`, benchmark `5/5 PASS`; direct CLI smoke remains separate and inconclusive unless clean exit evidence exists.

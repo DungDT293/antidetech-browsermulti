@@ -7,8 +7,8 @@ Fix repo blockers identified in `docs/BrowserMulti_repo_detailed_review.md`. Cur
 ## Current baseline
 
 - Canonical version metadata: `version.json`.
-- Current baseline: Chromium/BrowserMulti `152.0.7977.54`.
-- `.65` static build completed with exit code `0` and was benchmarked separately.
+- Current release: Chromium/BrowserMulti `152.0.7977.65`.
+- `.65` static build completed with exit code `0` and benchmarked separately.
 - `.65` benchmark: `5/5 PASS`.
 - `.54` SDK test: exit code `0`.
 - Direct extracted CLI smoke remains separate from Playwright benchmark and must not be marked PASS without exit code `0`.
@@ -23,7 +23,7 @@ Actions:
 
 1. Add one loader for PowerShell, Python, and Node consumers.
 2. Derive patch filenames, artifact names, manifest checks, SDK version, benchmark report paths, and release labels from metadata.
-3. Remove stale `_v154` references from docs and scripts.
+3. Keep historical version references explicitly labeled; current docs must use `.65` and `_v152` names.
 4. Add a consistency check that compares:
    - `version.json`;
    - `current_version.txt`;

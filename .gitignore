@@ -26,6 +26,13 @@ profiles/
 
 dist/test_extract/
 dist/staging/
+/dist_pypi/
+watcher_build.log
+build/
+*.pyc
+*.pyo
+*.pyd
+browsermulti/__pycache__/
 dist/temp_smoke_profile/
 dist/original_profile/
 dist/verify_*

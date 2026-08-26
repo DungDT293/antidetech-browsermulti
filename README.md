@@ -1,62 +1,78 @@
 <p align="center">
-  <h1 align="center">🛡️ BrowserMulti — Chromium Core & SDK</h1>
-  <p align="center">
-    <strong>Custom Chromium build with native C++ source patches and a Python Playwright SDK.</strong>
-  </p>
+  <h1 align="center">BrowserMulti — Chromium Core & SDK</h1>
+  <p align="center"><strong>Chromium source patches with Python Playwright runtime delivery.</strong></p>
 </p>
 
 <p align="center">
   <a href="https://pypi.org/project/browsermulti/"><img src="https://img.shields.io/pypi/v/browsermulti?color=blue&logo=pypi&logoColor=white" alt="PyPI Version"></a>
-  <a href="https://pypi.org/project/browsermulti/"><img src="https://img.shields.io/pypi/dm/browsermulti?color=success&logo=pypi&logoColor=white" alt="PyPI Downloads"></a>
-  <img src="https://img.shields.io/badge/Chromium-v152.0.7977.54-4285F4?logo=googlechrome&logoColor=white" alt="Chromium Version">
+  <a href="https://github.com/DungDT293/antidetech-browsermulti/releases/tag/v152.0.7977.65"><img src="https://img.shields.io/badge/Chromium-v152.0.7977.65-4285F4?logo=googlechrome&logoColor=white" alt="Chromium Version"></a>
   <img src="https://img.shields.io/badge/Build-Static_x64-0078D4?logo=windows&logoColor=white" alt="Windows x64">
   <a href="LICENSE"><img src="https://img.shields.io/github/license/DungDT293/antidetech-browsermulti?color=green" alt="License"></a>
 </p>
 
-> BrowserMulti is an experimental Chromium distribution for authorized browser automation, compatibility testing, and fingerprint research. Changes apply at Chromium C++ source level across Blink and V8; this project does not rely on JavaScript injection.
+BrowserMulti is an experimental Chromium distribution for authorized browser automation, compatibility testing, and fingerprint research. Native Chromium/Blink/V8 changes live in private patch files; this public repository contains the SDK, build tooling, documentation, and release metadata.
 
-## 🚀 Key Highlights
+Results below are recorded test scenarios, not universal guarantees. Do not use BrowserMulti to bypass access controls, fraud controls, CAPTCHAs, WAFs, or third-party protections without authorization.
 
-- **Native C++ engine patches:** User-Agent and Client Hints branding, `navigator.webdriver`, plugin/mime-type defaults, and selected V8 Inspector behavior.
-- **Playwright and CDP integration:** Persistent contexts, profiles, proxy configuration, and Chrome DevTools Protocol workflows.
-- **Static non-component runtime:** `is_component_build = false` produces a static Chromium layout centered on `chrome.dll`, with Windows assembly manifest `152.0.7977.54.manifest`.
-- **Smooth UI input helpers:** Optional cubic Bézier pointer interpolation and per-character typing delays for authorized UI testing. These helpers are not a security control and do not guarantee human-like behavior or bypass detection.
-- **Native network stack:** Chromium SOCKS5, HTTP/HTTPS proxy, proxy authentication, and TLS networking support.
-- **Automated upstream pipeline:** Stable version detection, single-tag fetch, dependency sync, separate Chromium/V8 patches, GN regeneration, build, benchmark, and packaging.
+## Current release
 
-## 📊 Benchmark Results — v152.0.7977.54
+| Item | Value |
+|---|---|
+| BrowserMulti / Chromium | `152.0.7977.65` |
+| Platform | Windows x64 |
+| Build layout | Static, `is_component_build = false` |
+| Git tag | [`v152.0.7977.65`](https://github.com/DungDT293/antidetech-browsermulti/releases/tag/v152.0.7977.65) |
+| Binary asset | `browsermulti-152.0.7977.65-win64.zip` |
+| Version source | [`version.json`](version.json) |
 
-Results from the project benchmark suite run against an extracted BrowserMulti binary. Results are environment- and profile-dependent; they are not guarantees for other sites, networks, or automation setups.
+## Recorded validation
 
-| Test | Result | Detail |
-| :--- | :---: | :--- |
-| **Google reCAPTCHA v3** | **PASS** | Score: `0.9` in recorded run |
-| **Cloudflare Turnstile** | **PASS** | Resolved in recorded run |
-| **Sannysoft Detection Suite** | **PASS** | WebDriver missing, Chrome present, Plugins=5 |
-| **TLS fingerprint** | **PASS** | JA4: `t13d1517h2_8daaf6152771_cb7bf5808d99`; HTTP/2 |
-| **DeviceAndBrowserInfo** | **PASS** | `isBot=false` in recorded run |
+The `.65` static build completed with exit code `0`. Playwright benchmark completed with exit code `0`: **5/5 PASS**.
 
-**Recorded total: 5/5 benchmark checks passed.**
+| Scenario | Recorded result |
+|---|---|
+| reCAPTCHA v3 | `0.9` |
+| Cloudflare Turnstile | Resolved |
+| Sannysoft | WebDriver missing, Chrome present, Plugins=5 |
+| TLS | JA4 `t13d1517h2_8daaf6152771_cb7bf5808d99`, HTTP/2 |
+| DeviceAndBrowserInfo | `isBot=false` |
 
-> Direct CLI smoke testing on the development Windows host remained sensitive to sandbox token and ACL behavior. See [handoff.md](handoff.md) for evidence, limitations, and troubleshooting notes.
+Evidence: [`docs/validation-152.0.7977.65.json`](docs/validation-152.0.7977.65.json) and [`docs/validation.md`](docs/validation.md). Direct extracted CLI smoke remains a separate gate and is not marked PASS without a clean process exit code.
 
-## 📦 Installation
+## Install SDK
 
-Install SDK from PyPI:
-
-```bash
-pip install browsermulti
+```powershell
+py -3.11 -m pip install --upgrade browsermulti
 ```
 
-Or install the local checkout:
+SDK package includes version identity and can fetch the matching runtime from GitHub Releases when no local binary exists. Cache location:
 
-```bash
-git clone https://github.com/DungDT293/antidetech-browsermulti.git
-cd antidetech-browsermulti
-pip install -e .
+```text
+~/.browsermulti/bin/152.0.7977.65/chrome.exe
 ```
 
-## 💡 Quick Start — Python Playwright
+Automatic download requires the release asset to exist at:
+
+```text
+https://github.com/DungDT293/antidetech-browsermulti/releases/download/v152.0.7977.65/browsermulti-152.0.7977.65-win64.zip
+```
+
+## Binary resolution
+
+Launcher checks paths in this order:
+
+1. `executable_path` argument.
+2. `BROWSERMULTI_EXECUTABLE` environment variable.
+3. `~/.browsermulti/bin/<version>/chrome.exe` cache/download path.
+4. `dist/browsermulti-<version>-win64/chrome.exe` in a source/build checkout.
+
+Example override:
+
+```powershell
+$env:BROWSERMULTI_EXECUTABLE = 'C:\Browsers\BrowserMulti\chrome.exe'
+```
+
+## Quick start
 
 ```python
 import asyncio
@@ -70,93 +86,64 @@ async def main():
         locale="en-US",
         timezone_id="America/New_York",
         enable_smooth_input=True,
-        # proxy="socks5://127.0.0.1:1080",
     )
     try:
         page = context.pages[0] if context.pages else await context.new_page()
         await page.goto("https://example.com")
-        if hasattr(page, "input_controller"):
-            await page.input_controller.move_to(400, 300)
     finally:
         await context.close()
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+asyncio.run(main())
 ```
 
-Use only against sites and systems where you have authorization. Do not use BrowserMulti to bypass access controls, fraud controls, CAPTCHAs, WAFs, or third-party protections without permission.
+Smooth input helpers are optional UI automation conveniences. They are not security controls and do not guarantee human-like behavior or detection outcomes.
 
-## 🔄 Feature Comparison
+## Build and release
 
-| Capability | Stock Playwright | BrowserMulti Core |
-| :--- | :---: | :---: |
-| Chromium source build | No | Yes |
-| Blink/V8 source patches | No | Yes |
-| Static x64 build | Runtime-dependent | `is_component_build = false` |
-| Python SDK | Playwright package | `browsermulti` package |
-| Persistent context | Yes | Yes |
-| Smooth UI input helper | No | Optional |
-| Upstream synchronization | User-managed | PowerShell pipeline |
-
-## 🧩 Repository Structure
-
-| Path | Purpose |
-| :--- | :--- |
-| `browsermulti/` | Python SDK with launcher and UI input helpers |
-| `BrowserMulti_chromium_v154.patch` | Chromium-root Blink, branding, UA, plugin, and search patches |
-| `BrowserMulti_v8_v154.patch` | V8 Inspector patch |
-| `auto_sync_and_build.ps1` | Stable sync, patch, build, benchmark, and package pipeline |
-| `auto_benchmark.js` | Playwright benchmark suite |
-| `handoff.md` | Architecture notes, failure history, validation status, and lessons |
-| `current_version.txt` | Recorded Stable version |
-| `setup.py` | Python package metadata |
-
-## 🔄 Upstream Synchronization Pipeline
-
-When a new Chrome Stable version is available, review local changes and disk space before running. The pipeline can reset the Chromium checkout with `git checkout .` and `git clean -df`.
+Chromium source and V8 are separate Git repositories. Private patch files stay outside public Git at the configured private patch directory. The pipeline performs dependency sync, independent patch application, GN regeneration, static Ninja build, benchmark, and strict runtime packaging.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File ./auto_sync_and_build.ps1
+powershell -ExecutionPolicy Bypass -File .\auto_sync_and_build.ps1
 ```
 
-Pipeline stages:
+The pipeline can reset Chromium source state. Back up local work and review the script before running it.
 
-1. Select newest valid Stable version.
-2. Fetch one version tag.
-3. Sync Chromium dependencies with `gclient.bat`.
-4. Apply Chromium-root and V8 patches independently.
-5. Regenerate GN files.
-6. Build with Ninja.
-7. Run benchmark suite.
-8. Package runtime files and manifest/XML identity files.
+Release checklist:
 
-## 📦 Release Artifact
+1. Verify `version.json`, `current_version.txt`, package version, manifest, and artifact name match.
+2. Build and capture exit code `0`.
+3. Extract ZIP and verify required runtime files.
+4. Run SDK and benchmark checks.
+5. Capture smoke-test evidence separately; do not infer PASS from process creation.
+6. Upload SDK wheels to PyPI using a fresh token through environment variables.
+7. Create the GitHub Release for the matching tag and attach the ZIP asset.
 
-Current local artifact:
+## Repository layout
 
-```text
-D:\dichchrome\dist\browsermulti-152.0.7977.54-win64.zip
-```
+| Path | Purpose |
+|---|---|
+| `browsermulti/` | Python SDK, downloader, launcher, input helper |
+| `version.json` | Canonical release metadata |
+| `current_version.txt` | Current release marker |
+| `setup.py`, `MANIFEST.in` | Python package build metadata |
+| `auto_sync_and_build.ps1` | Stable sync, patch, build, benchmark, package pipeline |
+| `auto_benchmark.js` | Playwright benchmark suite |
+| `docs/` | Architecture, build, SDK, security, operations, and validation docs |
+| `handoff.md` | Build history, evidence, and known limitations |
 
-- Size: `252,757,503 bytes` (`241.05 MB`).
-- Build: Static x64, `is_component_build = false`.
-- Manifest: `152.0.7977.54.manifest`.
+Private patches, Chromium checkout/build output, profiles, reports, logs, and package artifacts are intentionally not part of public Git.
 
-Create a GitHub release at:
+## Documentation
 
-<https://github.com/DungDT293/antidetech-browsermulti/releases/new>
+- [Architecture](docs/architecture.md)
+- [Build and release](docs/build-and-release.md)
+- [SDK usage](docs/sdk-usage.md)
+- [Security and IP hygiene](docs/security-and-ip.md)
+- [Operations](docs/operations.md)
+- [Validation](docs/validation.md)
+- [P0/P1/P2 remediation plan](docs/p0-p1-p2-remediation-plan.md)
 
-- **Tag:** `v152.0.7977.54`
-- **Title:** `BrowserMulti v152.0.7977.54 - Static Release`
-- **Asset:** `browsermulti-152.0.7977.54-win64.zip`
+## License and notices
 
-## 🏷️ Repository Metadata
-
-**Description:** Custom Chromium core with native Blink/V8 patches and a Python Playwright SDK for authorized automation testing.
-
-**Topics:** `chromium`, `playwright`, `cdp`, `blink`, `v8`, `chromium-build`, `cpp`, `browser-automation`
-
-## 📄 License and Notices
-
-This project contains Chromium-derived source and patches. Review Chromium's license, notices, and redistribution requirements before distributing binaries. Project-specific scripts and documentation are MIT-licensed unless stated otherwise.
+Chromium-derived code and binaries carry upstream license, notice, and component-license obligations. Review Chromium `LICENSE`, `NOTICE`, and component licenses before redistribution. Project-specific scripts and docs use the repository's project license unless stated otherwise.

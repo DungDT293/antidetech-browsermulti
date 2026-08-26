@@ -1,5 +1,9 @@
 # Operations
 
+## Current release
+
+Current release metadata is `152.0.7977.65`; verify `version.json` before operational changes.
+
 ## Scheduled watcher
 
 `auto_watcher.ps1` checks Google Stable and invokes the main pipeline only when the local version is older.

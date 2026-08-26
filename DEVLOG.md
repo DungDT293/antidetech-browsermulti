@@ -1,5 +1,6 @@
 # DEVLOG — BrowserMulti Stealth Browser
 > Nhật ký kinh nghiệm + kiến thức kiến trúc. Cập nhật liên tục trong quá trình phát triển để các bản update sau hoàn chỉnh hơn.
+> Historical research log. Version-specific notes below describe earlier Chromium experiments; current release metadata lives in `version.json`.
 > Last updated: 2026-08-22 (Phase 1: CDP Hardening)
 
 ---

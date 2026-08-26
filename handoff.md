@@ -8,7 +8,7 @@
 - `.65` Playwright benchmark: `5/5 PASS`, exit code `0`.
 - Detailed remediation plan: `docs\p0-p1-p2-remediation-plan.md`.
 
-## Current state — 2026-08-25
+## Historical state — 2026-08-25 (.54)
 
 - Stable source target: `152.0.7977.54`.
 - Chromium source: `D:\dichchrome\src`.
