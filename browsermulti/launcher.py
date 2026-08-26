@@ -1,26 +1,15 @@
-import json
 import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-
-_REPO_ROOT = Path(__file__).resolve().parent.parent
-_VERSION_FILE = _REPO_ROOT / "version.json"
-
-
 from playwright.async_api import BrowserContext, Page, async_playwright
 
-from browsermulti.downloader import cache_dir, ensure_binary, get_version, release_url
-from browsermulti.input_helper import SmoothInputController
+from . import __version__
+from .downloader import ensure_binary
+from .input_helper import SmoothInputController
 
 
-def _read_version() -> str:
-    try:
-        return str(json.loads(_VERSION_FILE.read_text(encoding="utf-8"))["version"])
-    except (OSError, KeyError, TypeError, ValueError) as exc:
-        raise RuntimeError(
-            f"BrowserMulti version metadata missing or invalid: {_VERSION_FILE}"
-        ) from exc
+_REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def _checked_path(path: Union[str, Path]) -> Path:
@@ -38,23 +27,18 @@ def _resolve_executable_path(executable_path: Optional[Union[str, Path]]) -> Pat
     if configured:
         return _checked_path(configured)
 
-    version = _read_version()
-    cached = cache_dir(version) / "chrome.exe"
-    if cached.is_file():
-        return cached.resolve()
-
-    packaged = _REPO_ROOT / "dist" / f"browsermulti-{version}-win64" / "chrome.exe"
-    if packaged.is_file():
-        return packaged.resolve()
-
     try:
         return _checked_path(ensure_binary())
-    except (FileNotFoundError, RuntimeError) as exc:
+    except (FileNotFoundError, RuntimeError) as download_error:
+        packaged = _REPO_ROOT / "dist" / f"browsermulti-{__version__}-win64" / "chrome.exe"
+        if packaged.is_file():
+            return packaged.resolve()
         raise FileNotFoundError(
             "BrowserMulti executable not found. Set executable_path, set "
             "BROWSERMULTI_EXECUTABLE, extract the versioned runtime under "
-            f"{_REPO_ROOT / 'dist'}, or allow download from {release_url(version)}."
-        ) from exc
+            f"{_REPO_ROOT / 'dist'}, or publish/download the GitHub Release asset "
+            f"for v{__version__}."
+        ) from download_error
 
 
 async def launch_persistent_context(

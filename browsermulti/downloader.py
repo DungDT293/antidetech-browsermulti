@@ -1,44 +1,30 @@
-import json
 import os
 import shutil
 import tempfile
 import urllib.error
 import urllib.request
 import zipfile
-from importlib.metadata import PackageNotFoundError, version as installed_version
 from pathlib import Path
 from typing import Optional
 
+from . import __version__
 
-_REPO_ROOT = Path(__file__).resolve().parent.parent
-_VERSION_FILE = _REPO_ROOT / "version.json"
-_RELEASE_BASE = "https://github.com/DungDT293/antidetech-browsermulti/releases/download"
-
-
-def _read_version() -> str:
-    try:
-        return str(json.loads(_VERSION_FILE.read_text(encoding="utf-8"))["version"])
-    except (OSError, KeyError, TypeError, ValueError) as exc:
-        raise RuntimeError(f"Invalid BrowserMulti version metadata: {_VERSION_FILE}") from exc
-
-
-def get_version() -> str:
-    if _VERSION_FILE.is_file():
-        return _read_version()
-    try:
-        return installed_version("browsermulti")
-    except PackageNotFoundError as exc:
-        raise RuntimeError("BrowserMulti package metadata is unavailable") from exc
+_RELEASE_URL = (
+    "https://github.com/DungDT293/antidetech-browsermulti/releases/download/"
+    f"v{__version__}/browsermulti-{__version__}-win64.zip"
+)
 
 
 def cache_dir(version: Optional[str] = None) -> Path:
-    return Path.home() / ".browsermulti" / "bin" / (version or get_version())
+    return Path.home() / ".browsermulti" / "bin" / (version or __version__)
 
 
 def release_url(version: Optional[str] = None) -> str:
-    selected = version or get_version()
-    artifact = f"browsermulti-{selected}-win64.zip"
-    return f"{_RELEASE_BASE}/v{selected}/{artifact}"
+    selected = version or __version__
+    return (
+        "https://github.com/DungDT293/antidetech-browsermulti/releases/download/"
+        f"v{selected}/browsermulti-{selected}-win64.zip"
+    )
 
 
 def _safe_extract(archive: Path, destination: Path) -> None:
@@ -52,19 +38,18 @@ def _safe_extract(archive: Path, destination: Path) -> None:
 
 
 def ensure_binary() -> str:
-    """Return cached Chrome executable, downloading the versioned release if needed."""
-    version = get_version()
-    target_dir = cache_dir(version)
+    """Return cached Chrome or download the versioned GitHub Release runtime."""
+    target_dir = cache_dir()
     executable = target_dir / "chrome.exe"
     if executable.is_file():
         return str(executable.resolve())
 
     target_dir.parent.mkdir(parents=True, exist_ok=True)
-    temp_root = Path(tempfile.mkdtemp(prefix=f"browsermulti-{version}-", dir=target_dir.parent))
+    temp_root = Path(tempfile.mkdtemp(prefix=f"browsermulti-{__version__}-", dir=target_dir.parent))
     archive = temp_root / "runtime.zip"
     extracted = temp_root / "extracted"
+    url = release_url()
     try:
-        url = release_url(version)
         try:
             urllib.request.urlretrieve(url, archive)
         except (OSError, urllib.error.URLError) as exc:
@@ -84,6 +69,6 @@ def ensure_binary() -> str:
             raise RuntimeError(f"Downloaded release missing expected executable: {executable}")
         return str(executable.resolve())
     except zipfile.BadZipFile as exc:
-        raise RuntimeError(f"Downloaded BrowserMulti release is not a valid ZIP: {release_url(version)}") from exc
+        raise RuntimeError(f"Downloaded BrowserMulti release is not a valid ZIP: {url}") from exc
     finally:
         shutil.rmtree(temp_root, ignore_errors=True)
