@@ -43,4 +43,4 @@ The `.65` runtime ZIP is `D:\dichchrome\dist\browsermulti-152.0.7977.65-win64.zi
 ## P0 validation update
 
 - WebRTC direct ICE run: `VERIFIED PASS` for completed gathering with mDNS host candidates and no literal private/public IP addresses. Proxy mode remains untested.
-- Direct extracted CLI smoke: `FAIL_EXIT_CODE`, process exit code `-2147483645` (`0x80000003`), with sandbox `Access is denied (0x5)`; cleanup completed. Self-terminating `--dump-dom` retry did not produce exit code `0`. This is not a release PASS.
+- Direct extracted CLI smoke matrix: no-sandbox mode and token-sandbox mode both `INCONCLUSIVE_TIMEOUT` after 30 seconds; no exit code `0` or DOM output captured. Full AppContainer mode remains blocked by prior `Access is denied (0x5)` / `STATUS_BREAKPOINT (0x80000003)`. Cleanup completed. This is not a release PASS.

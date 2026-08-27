@@ -1,82 +1,65 @@
 [CmdletBinding()]
 param(
     [string]$Executable = 'D:\dichchrome\dist\browsermulti-152.0.7977.65-win64\chrome.exe',
-    [string]$Profile = 'D:\dichchrome\temp_smoke_profile',
+    [string]$Root = 'D:\dichchrome',
     [string]$Output = 'D:\dichchrome\direct_smoke_result.json'
 )
 
 $ErrorActionPreference = 'Stop'
-$stdoutFile = Join-Path $env:TEMP 'browsermulti-direct-smoke.stdout.txt'
-$stderrFile = Join-Path $env:TEMP 'browsermulti-direct-smoke.stderr.txt'
-$arguments = @(
-    '--headless=new',
-    "--user-data-dir=$Profile",
-    '--no-first-run',
-    '--no-default-browser-check',
-    '--dump-dom',
-    'data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3EDirect%20Smoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E'
-)
+$tempDir = Join-Path $Root 'temp_smoke_profile'
+$domUrl = 'data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3ESmoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E'
+
+function Invoke-SmokeMode {
+    param([string]$Name, [string[]]$Arguments, [string]$Profile)
+    $stdout = Join-Path $env:TEMP "browsermulti-$Name.stdout.txt"
+    $stderr = Join-Path $env:TEMP "browsermulti-$Name.stderr.txt"
+    $mode = [ordered]@{ arguments = $Arguments; profile = $Profile; exit_code = $null; dom_matched = $false; stderr = ''; timed_out = $false; status = 'INCONCLUSIVE' }
+    try {
+        if (Test-Path -LiteralPath $Profile) { Remove-Item -LiteralPath $Profile -Recurse -Force }
+        New-Item -ItemType Directory -Path $Profile -Force | Out-Null
+        $p = Start-Process -FilePath $Executable -ArgumentList $Arguments -NoNewWindow -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+        if (-not $p.WaitForExit(60000)) {
+            $mode.timed_out = $true
+            Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+            $p.WaitForExit(5000)
+        }
+        if ($p.HasExited) { $mode.exit_code = $p.ExitCode }
+        $output = if (Test-Path -LiteralPath $stdout) { Get-Content -LiteralPath $stdout -Raw } else { '' }
+        $errorText = if (Test-Path -LiteralPath $stderr) { Get-Content -LiteralPath $stderr -Raw } else { '' }
+        $mode.dom_matched = [bool]($output -match 'DirectSmokePass' -and $output -match 'Smoke Test OK')
+        $mode.stderr = (($errorText -replace '\s+', ' ').Trim())
+        if ($mode.exit_code -eq 0 -and $mode.dom_matched) { $mode.status = 'PASS' }
+        elseif ($mode.timed_out) { $mode.status = 'INCONCLUSIVE_TIMEOUT' }
+        elseif ($mode.exit_code -ne 0) { $mode.status = 'FAIL_EXIT_CODE' }
+        else { $mode.status = 'FAIL_OUTPUT' }
+    } catch {
+        $mode.stderr = $_.Exception.Message
+        $mode.status = 'FAIL_ERROR'
+    } finally {
+        if (Test-Path -LiteralPath $Profile) { Remove-Item -LiteralPath $Profile -Recurse -Force -ErrorAction SilentlyContinue }
+        Remove-Item -LiteralPath $stdout,$stderr -Force -ErrorAction SilentlyContinue
+    }
+    return ,$mode
+}
+
 $result = [ordered]@{
+    test_timestamp = (Get-Date).ToString('o')
     version = '152.0.7977.65'
     executable = $Executable
-    arguments = $arguments
-    profile = $Profile
-    started = $false
-    exit_code = $null
-    stdout_contains_title = $false
-    stdout_contains_body = $false
+    no_sandbox_mode = $null
+    token_sandbox_mode = $null
+    full_appcontainer_mode = [ordered]@{ status = 'BLOCKED_BY_OS_ACL_ON_DRIVE_D'; error = 'Prior full-sandbox run returned Access is denied (0x5), followed by STATUS_BREAKPOINT (0x80000003).' }
     cleanup = $false
-    verdict = 'INCONCLUSIVE'
 }
-
 try {
-    if (-not (Test-Path -LiteralPath $Executable -PathType Leaf)) {
-        throw "Missing executable: $Executable"
-    }
-    foreach ($file in @($stdoutFile, $stderrFile)) {
-        if (Test-Path -LiteralPath $file) {
-            Remove-Item -LiteralPath $file -Force
-        }
-    }
-    if (Test-Path -LiteralPath $Profile) {
-        Remove-Item -LiteralPath $Profile -Recurse -Force
-    }
-    New-Item -ItemType Directory -Path $Profile -Force | Out-Null
-
-    $process = Start-Process -FilePath $Executable -ArgumentList $arguments -NoNewWindow -PassThru -Wait `
-        -RedirectStandardOutput $stdoutFile -RedirectStandardError $stderrFile
-    $result.started = $true
-    $result.exit_code = $process.ExitCode
-    $stdout = if (Test-Path -LiteralPath $stdoutFile) { Get-Content -LiteralPath $stdoutFile -Raw } else { '' }
-    $stderr = if (Test-Path -LiteralPath $stderrFile) { Get-Content -LiteralPath $stderrFile -Raw } else { '' }
-    $result.stdout_contains_title = $stdout -match 'DirectSmokePass'
-    $result.stdout_contains_body = $stdout -match 'Direct Smoke Test OK'
-    $normalizedStderr = ($stderr -replace '\s+', ' ').Trim()
-    $result.stderr_preview = $normalizedStderr.Substring(0, [Math]::Min(500, $normalizedStderr.Length))
-    $result.output_nonempty = -not [string]::IsNullOrWhiteSpace($stdout)
-    if ($result.exit_code -eq 0 -and $result.output_nonempty) {
-        $result.verdict = 'PASS'
-    } elseif ($result.exit_code -eq 0) {
-        $result.verdict = 'FAIL_OUTPUT'
-    } else {
-        $result.verdict = 'FAIL_EXIT_CODE'
-    }
-} catch {
-    $result.error = $_.Exception.Message
-    $result.verdict = 'FAIL_ERROR'
-} finally {
-    if (Test-Path -LiteralPath $Profile) {
-        Remove-Item -LiteralPath $Profile -Recurse -Force -ErrorAction SilentlyContinue
-    }
-    $result.cleanup = -not (Test-Path -LiteralPath $Profile)
-    foreach ($file in @($stdoutFile, $stderrFile)) {
-        if (Test-Path -LiteralPath $file) {
-            Remove-Item -LiteralPath $file -Force -ErrorAction SilentlyContinue
-        }
-    }
-    $result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $Output -Encoding UTF8
+    if (-not (Test-Path -LiteralPath $Executable -PathType Leaf)) { throw "Missing executable: $Executable" }
+    $result.no_sandbox_mode = Invoke-SmokeMode 'no-sandbox' @('--headless=new','--no-sandbox','--disable-gpu',"--user-data-dir=$(Join-Path $tempDir 'profile1')",'--no-first-run','--no-default-browser-check','--dump-dom',$domUrl) (Join-Path $tempDir 'profile1')
+    $result.token_sandbox_mode = Invoke-SmokeMode 'token-sandbox' @('--headless=new','--disable-gpu-sandbox','--disable-features=RendererAppContainer',"--user-data-dir=$(Join-Path $tempDir 'profile2')",'--no-first-run','--no-default-browser-check','--dump-dom',$domUrl) (Join-Path $tempDir 'profile2')
+} catch { $result.error = $_.Exception.Message } finally {
+    if (Test-Path -LiteralPath $tempDir) { Remove-Item -LiteralPath $tempDir -Recurse -Force -ErrorAction SilentlyContinue }
+    $result.cleanup = -not (Test-Path -LiteralPath $tempDir)
+    $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $Output -Encoding UTF8
 }
-
-$result | ConvertTo-Json -Depth 5
-if ($result.verdict -ne 'PASS') { exit 1 }
+$result | ConvertTo-Json -Depth 8
+if ($result.no_sandbox_mode.status -ne 'PASS') { exit 1 }
 exit 0

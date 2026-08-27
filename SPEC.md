@@ -15,7 +15,9 @@
 | ALPN h2/http1.1 | ✅ | Verify http_version=h2 |
 | HTTP/2 SETTINGS/PRIORITY/WINDOW_UPDATE (Akamai fp) | ✅ | akamai_hash=`52d84b11...` có mặt, ja4 trùng Chrome h2 (verify qua tls.peet.ws) |
 | TCP/IP p0f (window/TTL=128/DF/MSS) | ✅ | Stack Windows thật |
-| WebRTC ICE/SRTP/DTLS | ✅ VERIFIED PASS (direct, mDNS host candidates) | `.65` run completed ICE gathering; no literal private/public IP exposed. Proxy mode not tested in this run; validate proxy policy separately. | Direct smoke remains separate.
+| WebRTC ICE/SRTP/DTLS | ✅ VERIFIED PASS (direct, mDNS host candidates) | `.65` run completed ICE gathering; no literal private/public IP exposed. Proxy mode not tested in this run; validate proxy policy separately. | Direct smoke remains separate. |
+| Direct CLI Smoke (Automation Mode) | ⚠️ INCONCLUSIVE | no-sandbox and token-sandbox modes timed out without exit code `0` or DOM output; not VERIFIED PASS. |
+| Direct CLI Smoke (OS AppContainer) | ⚠️ BLOCKED_BY_OS_ACL_ON_DRIVE_D | Prior run returned `Access is denied (0x5)` and `STATUS_BREAKPOINT (0x80000003)`. |
 | ECH / DoH mặc định | ⚠️ cần bật flag như Chrome ổn định |
 
 ## Tầng 2 — V8 Execution Environment

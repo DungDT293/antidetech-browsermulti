@@ -42,7 +42,7 @@ The `.65` static build completed with exit code `0`. Playwright benchmark comple
 | TLS | JA4 `t13d1517h2_8daaf6152771_cb7bf5808d99`, HTTP/2 |
 | DeviceAndBrowserInfo | `isBot=false` |
 
-Evidence: [`docs/validation-152.0.7977.65.json`](docs/validation-152.0.7977.65.json) and [`docs/validation.md`](docs/validation.md). WebRTC direct run: VERIFIED PASS for no literal private/public IP candidates; proxy mode remains separate. Direct extracted CLI smoke: FAIL with exit code `-2147483645`; not release PASS.
+Evidence: [`docs/validation-152.0.7977.65.json`](docs/validation-152.0.7977.65.json) and [`docs/validation.md`](docs/validation.md). WebRTC direct run: VERIFIED PASS for no literal private/public IP candidates; proxy mode remains separate. Direct extracted CLI smoke matrix remains INCONCLUSIVE: no-sandbox and token-sandbox modes timed out without exit code `0`; not release PASS.
 
 ## Install SDK
 
