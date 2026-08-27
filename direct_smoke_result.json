@@ -1,52 +1,46 @@
-﻿{
-    "test_timestamp":  "2026-08-27T07:40:11.4278734+07:00",
-    "version":  "152.0.7977.65",
-    "executable":  "D:\\dichchrome\\dist\\browsermulti-152.0.7977.65-win64\\chrome.exe",
-    "no_sandbox_mode":  [
-                            true,
-                            {
-                                "arguments":  [
-                                                  "--headless=new",
-                                                  "--no-sandbox",
-                                                  "--disable-gpu",
-                                                  "--user-data-dir=D:\\dichchrome\\temp_smoke_profile\\profile1",
-                                                  "--no-first-run",
-                                                  "--no-default-browser-check",
-                                                  "--dump-dom",
-                                                  "data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3ESmoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E"
-                                              ],
-                                "profile":  "D:\\dichchrome\\temp_smoke_profile\\profile1",
-                                "exit_code":  null,
-                                "dom_matched":  false,
-                                "stderr":  "[32524:9980:0827/074020.142:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: QUOTA_EXCEEDED",
-                                "timed_out":  true,
-                                "status":  "INCONCLUSIVE_TIMEOUT"
-                            }
-                        ],
-    "token_sandbox_mode":  [
-                               true,
-                               {
-                                   "arguments":  [
-                                                     "--headless=new",
-                                                     "--disable-gpu-sandbox",
-                                                     "--disable-features=RendererAppContainer",
-                                                     "--user-data-dir=D:\\dichchrome\\temp_smoke_profile\\profile2",
-                                                     "--no-first-run",
-                                                     "--no-default-browser-check",
-                                                     "--dump-dom",
-                                                     "data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3ESmoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E"
-                                                 ],
-                                   "profile":  "D:\\dichchrome\\temp_smoke_profile\\profile2",
-                                   "exit_code":  null,
-                                   "dom_matched":  false,
-                                   "stderr":  "[17604:24444:0827/074057.267:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT",
-                                   "timed_out":  true,
-                                   "status":  "INCONCLUSIVE_TIMEOUT"
-                               }
-                           ],
-    "full_appcontainer_mode":  {
-                                   "status":  "BLOCKED_BY_OS_ACL_ON_DRIVE_D",
-                                   "error":  "Prior full-sandbox run returned Access is denied (0x5), followed by STATUS_BREAKPOINT (0x80000003)."
-                               },
-    "cleanup":  true
+{
+  "test_timestamp": "2026-08-27T07:40:11.4278734+07:00",
+  "version": "152.0.7977.65",
+  "executable": "D:\\dichchrome\\dist\\browsermulti-152.0.7977.65-win64\\chrome.exe",
+  "no_sandbox_mode": {
+    "arguments": [
+      "--headless=new",
+      "--no-sandbox",
+      "--disable-gpu",
+      "--user-data-dir=D:\\dichchrome\\temp_smoke_profile\\profile1",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--dump-dom",
+      "data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3ESmoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E"
+    ],
+    "profile": "D:\\dichchrome\\temp_smoke_profile\\profile1",
+    "exit_code": null,
+    "dom_matched": false,
+    "stderr": "QUOTA_EXCEEDED",
+    "timed_out": true,
+    "status": "INCONCLUSIVE_TIMEOUT"
+  },
+  "token_sandbox_mode": {
+    "arguments": [
+      "--headless=new",
+      "--disable-gpu-sandbox",
+      "--disable-features=RendererAppContainer",
+      "--user-data-dir=D:\\dichchrome\\temp_smoke_profile\\profile2",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--dump-dom",
+      "data:text/html,%3Chtml%3E%3Chead%3E%3Ctitle%3EDirectSmokePass%3C%2Ftitle%3E%3C%2Fhead%3E%3Cbody%3E%3Ch1%3ESmoke%20Test%20OK%3C%2Fh1%3E%3C%2Fbody%3E%3C%2Fhtml%3E"
+    ],
+    "profile": "D:\\dichchrome\\temp_smoke_profile\\profile2",
+    "exit_code": null,
+    "dom_matched": false,
+    "stderr": "DEPRECATED_ENDPOINT",
+    "timed_out": true,
+    "status": "INCONCLUSIVE_TIMEOUT"
+  },
+  "full_appcontainer_mode": {
+    "status": "BLOCKED_BY_OS_ACL_ON_DRIVE_D",
+    "error": "Prior full-sandbox run returned Access is denied (0x5), followed by STATUS_BREAKPOINT (0x80000003)."
+  },
+  "cleanup": true
 }
