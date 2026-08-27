@@ -1,6 +1,10 @@
 # Validation
 
-## Recorded .54 benchmark
+## Current status
+
+`P1 implementation complete; selected validation gates pending.` Current canonical release is `152.0.7977.65`.
+
+## Historical .54 benchmark
 
 The extracted `.54` binary recorded 5/5 benchmark passes:
 
@@ -26,7 +30,7 @@ A Playwright benchmark PASS does not erase a failed or inconclusive direct CLI s
 
 ## Current update
 
-The watcher detected Chrome `152.0.7977.65` on 2026-08-26. The `.65` build and benchmark completed; see the recorded section below.
+The watcher detected Chrome `152.0.7977.65` on 2026-08-26. The `.65` build and benchmark completed; see the recorded section below. P1 implementation is complete; selected validation gates remain pending.
 
 ## Recorded .65 benchmark
 

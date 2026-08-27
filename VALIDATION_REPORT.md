@@ -1,28 +1,50 @@
-# VALIDATION REPORT — BrowserMulti (Giai đoạn 3: Validation mở rộng)
+# BrowserMulti Validation Report
 
-> Chạy tự động: 2026-08-22 · binary: `src/out/Default/chrome.exe` · profile: `user_data` · viewport: null · human_input.js
+## Current release status
 
-## Bảng tổng hợp
+- Release: `152.0.7977.65` static Windows x64.
+- Project status: **P1 implementation complete; selected validation gates pending**.
+- Evidence scope: recorded scenarios on build host. Results do not establish universal undetectability, anti-bot bypass, proxy routing, or production readiness.
 
-| # | Hệ thống | Kết quả thực tế | Trạng thái | Ảnh/Bằng chứng |
-|---|----------|-----------------|-----------|----------------|
-| 1 | **BrowserScan** Bot Detection | Test Results: **Normal** — Webdriver ✅, User-Agent ✅, CDP ✅, Navigator ✅ | **PASS** | test_reports/phase3_browserscan.png |
-| 2 | **Incolumitas** (bot.incolumitas.com) | **33/33 test = OK, 0 FAILED** — gồm: webdriverPresent, puppeteerEvaluationScript, connectionRTT, refMatch, overrideTest, overflowTest, **puppeteerExtraStealthUsed=OK**, inconsistentWebWorkerNavigatorProperty=OK; Intoli battery: userAgent/webDriver/webDriverAdvanced/pluginsLength/pluginArray/languages = OK; fpscanner: PHANTOM_*, HEADCHR_*, SELENIUM_DRIVER, CHR_DEBUG_TOOLS, CHR_BATTERY, CHR_MEMORY, TRANSPARENT_PIXEL, SEQUENTUM... = OK | **PASS** | test_reports/incolumitas_full.txt |
-| 3 | **FingerprintJS Pro** Demo | Visitor ID render thành công; Browser Smart Signals: **Bot Detection = Not Detected**, VPN Detection = Not Detected, Browser Tampering = Not Detected, Developer Tools = Not Detected, Virtual Machine = Not Detected, Privacy Settings = Not Detected, IP Blocklist = Not Detected, High Activity Device = Not Detected; Suspect Score = 6 (thấp); Geolocation: Da Nang, VN (khớp IP thật) | **PASS** | test_reports/phase3_fingerprintjs.png |
-| 4 | **Antoine Vastel** (arh.antoinevastel.com/bots) | Server trả về **502 Bad Gateway** — dịch vụ đã ngừng hoạt động, không thể kiểm tra | ⚪ UNAVAILABLE | test_reports/phase3_vastel.png |
+## Current `.65` evidence
 
-## Phân tích & nhận xét
+| Area | Result | Evidence boundary |
+|---|---|---|
+| Static build | **PASS** | Exit code `0` |
+| Playwright benchmark | **PASS** | Recorded `5/5 PASS`: reCAPTCHA v3 `0.9`, Turnstile resolved, Sannysoft checks, TLS JA4/HTTP2, DeviceAndBrowserInfo `isBot=false`; scenario evidence only |
+| SDK runtime | **PASS** | Local Playwright wrapper test exit code `0` |
+| Viewport | **PASS** | `viewport=None` preserves native window geometry in launcher |
+| Fingerprint snapshot | **PASS, host-relative** | `157` leaves; immediate baseline comparison `0 diff`; host hardware/display/permission changes can produce valid diffs |
+| Coherence Engine | **IMPLEMENTED** | Three observational hardware presets; warning-only locale/timezone/proxy-country checks; no spoofing or GeoIP lookup |
+| Direct WebRTC privacy | **VERIFIED PASS, single run** | ICE gathering complete; mDNS `.local`; no literal private/public IP in recorded run |
+| Proxy WebRTC | **INCONCLUSIVE_NO_PROXY** | `TEST_PROXY` absent; no proxy route claim |
+| Direct CLI smoke | **INCONCLUSIVE_TIMEOUT** | No exit code `0` or DOM output; full AppContainer path has drive ACL limitation |
+| Profile lifecycle | **PENDING** | Aging, locking, migration, and production workflow remain unverified |
 
-### Điểm nhấn quan trọng nhất: `puppeteerExtraStealthUsed: "OK"`
-Incolumitas có bài test **chuyên phát hiện việc dùng thư viện stealth-JS injection** (puppeteer-extra-stealth). Các giải pháp JS-injection gần như luôn trượt bài này vì để lại vết trong prototype chain và descriptor. BrowserMulti vượt nhờ đúng triết lý thiết kế: *không inject bất kỳ thứ gì* — mọi tín hiệu đều từ binary C++ thật.
+## P1 commands
 
-### FingerprintJS Pro — bộ smart signals thương mại
-Toàn bộ 8/8 signals trả về **Not Detected**, Suspect Score chỉ 6/100. Geolocation khớp IP thực (Da Nang, VN) → tính nhất quán GeoIP tốt.
+```powershell
+python D:\dichchrome\tests\test_fingerprint_snapshot.py
+node D:\dichchrome\test_webrtc_leak.js
+```
 
-### Lưu ý phương pháp
-- Lần chạy đầu, heuristic đếm từ khóa "failed" của incolumitas cho kết quả sai (8) do đếm nhầm **văn bản mô tả** của trang ("tests will fail if headless..."). Bài học: luôn dump context quanh từ khóa trước khi kết luận (đã ghi vào DEVLOG.md).
-- Antoine Vastel bots test (arh.antoinevastel.com) hiện 502 — trang này là tiền thân của incolumitas (cùng tác giả), nên kết quả incolumitas đã phủ phạm vi tương đương.
-- reCAPTCHA v3 = 0.9 và Cloudflare Turnstile PASS đã xác minh ở Giai đoạn 2 (`test_human_behavior.js`).
+Proxy test requires authorized operator-provided infrastructure. Keep credentials out of command history and reports:
 
-## Kết luận
-BrowserMulti vượt qua toàn bộ các hệ thống phòng thủ thương mại còn hoạt động trong danh sách kiểm thử, ở cả tầng fingerprint tĩnh lẫn tầng hành vi.
+```powershell
+$env:TEST_PROXY = Read-Host "Authorized proxy URL"
+node D:\dichchrome\test_webrtc_proxy.js
+Remove-Item Env:\TEST_PROXY -ErrorAction SilentlyContinue
+```
+
+`PASS_MDNS_OR_RELAY_NO_PUBLIC_IP` means no literal public address was observed in complete gathering. It does not prove every WebRTC packet used proxy transport. Relay evidence is required for stronger route attribution.
+
+## Historical evidence
+
+Older `.54` and v154 BrowserScan, Incolumitas, FingerprintJS, reCAPTCHA, and CDP research records remain in repository history and older artifacts. They describe their original binary, host, date, and network conditions. They must not be read as fresh `.65` validation.
+
+## Reporting rules
+
+1. Require real process exit codes and required output; never infer PASS from process creation or Ninja progress.
+2. Separate direct CLI smoke, Playwright benchmark, direct WebRTC, and proxy WebRTC evidence.
+3. Treat host-relative fingerprint diffs as review signals, not automatic defects.
+4. Do not publish credentials, profiles, cookies, logs, private patches, or unreviewed reports.

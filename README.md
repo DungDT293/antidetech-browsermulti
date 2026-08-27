@@ -19,6 +19,21 @@ Results below are recorded test scenarios, not universal guarantees. Do not use 
 - `v154 Research Phase (Historical POC)`: historical CDP/fingerprint research notes only.
 - `v152.0.7977.65 (Canonical Stable Distribution)`: current static Windows x64 build and SDK.
 
+## Current project status
+
+`P1 implementation complete; selected validation gates pending.`
+
+| Gate | Status |
+|---|---|
+| Core `.65` static build | PASS, exit code `0` |
+| SDK Playwright runtime | PASS, local exit code `0` |
+| Fingerprint snapshot | PASS on build host, `157` leaves, `0` diff |
+| Coherence Engine | IMPLEMENTED, warning-only, no spoofing |
+| Direct WebRTC privacy | VERIFIED PASS, single run, mDNS candidates |
+| WebRTC through proxy | `INCONCLUSIVE_NO_PROXY` |
+| Direct CLI smoke | `INCONCLUSIVE_TIMEOUT` |
+| Profile lifecycle / production readiness | Pending verification |
+
 ## Current release
 
 | Item | Value |
