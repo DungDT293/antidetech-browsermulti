@@ -1,0 +1,22 @@
+{
+  "test": "webrtc-proxy-privacy",
+  "version": "152.0.7977.65",
+  "executable": "D:\\dichchrome\\dist\\browsermulti-152.0.7977.65-win64\\chrome.exe",
+  "proxy": {
+    "configured": false
+  },
+  "expected_public_ip_configured": false,
+  "policy": "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
+  "candidates": [],
+  "candidate_types": [],
+  "candidate_addresses": [],
+  "mdns_addresses": [],
+  "private_addresses": [],
+  "public_addresses": [],
+  "relay_candidates": 0,
+  "gathering_complete": false,
+  "verdict": "INCONCLUSIVE_NO_PROXY",
+  "evidence_class": "A",
+  "error": "Set TEST_PROXY to an authorized proxy; proxy route cannot be tested otherwise.",
+  "cleanup": true
+}

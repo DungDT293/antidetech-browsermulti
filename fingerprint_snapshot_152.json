@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "version": "152.0.7977.65",
+  "fingerprint": {
+    "navigator": {
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "app_version": "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "app_name": "Netscape",
+      "app_code_name": "Mozilla",
+      "platform": "Win32",
+      "vendor": "Google Inc.",
+      "vendor_sub": "",
+      "product": "Gecko",
+      "product_sub": "20030107",
+      "language": "en-US",
+      "languages": [
+        "en-US",
+        "en"
+      ],
+      "hardware_concurrency": 44,
+      "device_memory": null,
+      "max_touch_points": 0,
+      "cookie_enabled": true,
+      "do_not_track": null,
+      "webdriver": false,
+      "pdf_viewer_enabled": true,
+      "plugins_length": 5,
+      "plugins": [
+        {
+          "name": "PDF Viewer",
+          "filename": "internal-pdf-viewer",
+          "length": 2
+        },
+        {
+          "name": "Chrome PDF Viewer",
+          "filename": "internal-pdf-viewer",
+          "length": 2
+        },
+        {
+          "name": "Chromium PDF Viewer",
+          "filename": "internal-pdf-viewer",
+          "length": 2
+        },
+        {
+          "name": "Microsoft Edge PDF Viewer",
+          "filename": "internal-pdf-viewer",
+          "length": 2
+        },
+        {
+          "name": "WebKit built-in PDF",
+          "filename": "internal-pdf-viewer",
+          "length": 2
+        }
+      ],
+      "mime_types_length": 2,
+      "mime_types": [
+        {
+          "type": "application/pdf",
+          "suffixes": "pdf",
+          "description": "Portable Document Format"
+        },
+        {
+          "type": "text/pdf",
+          "suffixes": "pdf",
+          "description": "Portable Document Format"
+        }
+      ],
+      "user_agent_data_present": false,
+      "ua_data_brands": [],
+      "ua_data_mobile": null,
+      "ua_data_platform": null,
+      "ua_data_architecture": null,
+      "ua_data_bitness": null,
+      "ua_data_model": null,
+      "ua_data_platform_version": null,
+      "ua_data_full_version": null,
+      "ua_data_full_version_list": [],
+      "ua_data_wow64": null
+    },
+    "screen": {
+      "width": 1280,
+      "height": 720,
+      "avail_width": 1280,
+      "avail_height": 720,
+      "color_depth": 24,
+      "pixel_depth": 24,
+      "pixel_ratio": 1,
+      "orientation_type": "landscape-primary",
+      "orientation_angle": 0,
+      "is_extended": null
+    },
+    "window": {
+      "inner_width": 1280,
+      "inner_height": 720,
+      "outer_width": 1296,
+      "outer_height": 808,
+      "screen_x": 10,
+      "screen_y": 10,
+      "device_pixel_ratio": 1,
+      "chrome_present": true,
+      "chrome_runtime_present": false,
+      "chrome_descriptor": {
+        "configurable": true,
+        "enumerable": true,
+        "writable": true,
+        "has_value": true
+      },
+      "location_protocol": "data:"
+    },
+    "document": {
+      "hidden": false,
+      "visibility_state": "visible",
+      "has_focus": true,
+      "content_type": "text/html",
+      "character_set": "windows-1252",
+      "compat_mode": "BackCompat",
+      "title_length": 33,
+      "doctype_present": false
+    },
+    "webgl": {
+      "available": true,
+      "vendor": "WebKit",
+      "renderer": "WebKit WebGL",
+      "version": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
+      "shading_language_version": "WebGL GLSL ES 1.0 (OpenGL ES GLSL ES 1.0 Chromium)",
+      "unmasked_vendor": "Google Inc. (NVIDIA)",
+      "unmasked_renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1070 (0x00001B81) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "max_texture_size": 16384,
+      "max_cube_map_texture_size": 16384,
+      "max_renderbuffer_size": 16384,
+      "max_vertex_attribs": 16,
+      "max_vertex_uniform_vectors": 4095,
+      "max_fragment_uniform_vectors": 1024,
+      "aliased_line_width_range": [
+        1,
+        1
+      ],
+      "aliased_point_size_range": [
+        1,
+        1024
+      ],
+      "extensions": [
+        "ANGLE_instanced_arrays",
+        "EXT_blend_minmax",
+        "EXT_clip_control",
+        "EXT_color_buffer_half_float",
+        "EXT_depth_clamp",
+        "EXT_disjoint_timer_query",
+        "EXT_float_blend",
+        "EXT_frag_depth",
+        "EXT_polygon_offset_clamp",
+        "EXT_sRGB",
+        "EXT_shader_texture_lod",
+        "EXT_texture_compression_bptc",
+        "EXT_texture_compression_rgtc",
+        "EXT_texture_filter_anisotropic",
+        "EXT_texture_mirror_clamp_to_edge",
+        "KHR_parallel_shader_compile",
+        "OES_element_index_uint",
+        "OES_fbo_render_mipmap",
+        "OES_standard_derivatives",
+        "OES_texture_float",
+        "OES_texture_float_linear",
+        "OES_texture_half_float",
+        "OES_texture_half_float_linear",
+        "OES_vertex_array_object",
+        "WEBGL_blend_func_extended",
+        "WEBGL_color_buffer_float",
+        "WEBGL_compressed_texture_s3tc",
+        "WEBGL_compressed_texture_s3tc_srgb",
+        "WEBGL_debug_renderer_info",
+        "WEBGL_debug_shaders",
+        "WEBGL_depth_texture",
+        "WEBGL_draw_buffers",
+        "WEBGL_lose_context",
+        "WEBGL_multi_draw",
+        "WEBGL_polygon_mode"
+      ]
+    },
+    "audio": {
+      "available": true,
+      "sample_rate": 48000,
+      "base_latency": 0.01,
+      "output_latency": 0,
+      "max_channel_count": 2,
+      "state": "running",
+      "render_digest": null
+    },
+    "permissions": {
+      "notification": "denied",
+      "notifications": "denied",
+      "geolocation": "denied",
+      "camera": "denied",
+      "microphone": "denied",
+      "clipboard_read": "denied",
+      "clipboard_write": "denied"
+    },
+    "descriptors": {
+      "chrome": {
+        "configurable": true,
+        "enumerable": true,
+        "writable": true,
+        "has_value": true
+      },
+      "webdriver": {
+        "configurable": true,
+        "enumerable": true,
+        "has_getter": true,
+        "getter_source": "function get webdriver() { [native code] }"
+      }
+    }
+  },
+  "field_count": 157,
+  "metadata": {
+    "executable": "D:\\dichchrome\\dist\\browsermulti-152.0.7977.65-win64\\chrome.exe",
+    "headless": true,
+    "viewport": null,
+    "proxy_configured": false,
+    "evidence_class": "A"
+  },
+  "comparison": {
+    "status": "PASS",
+    "diff": []
+  }
+}

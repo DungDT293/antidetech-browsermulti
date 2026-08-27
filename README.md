@@ -44,6 +44,27 @@ The `.65` static build completed with exit code `0`. Playwright benchmark comple
 
 Evidence: [`docs/validation-152.0.7977.65.json`](docs/validation-152.0.7977.65.json) and [`docs/validation.md`](docs/validation.md). WebRTC direct run: VERIFIED PASS for no literal private/public IP candidates; proxy mode remains separate. Direct extracted CLI smoke matrix remains INCONCLUSIVE: no-sandbox and token-sandbox modes timed out without exit code `0`; not release PASS.
 
+## P1 fingerprint validation
+
+- `browsermulti/fingerprint.py` provides three observational hardware presets and local locale/timezone/proxy-country coherence warnings. Presets do not spoof WebGL, audio, screen, OS, or navigator values.
+- `tests/test_fingerprint_snapshot.py` captures 157 stable browser identity leaves from local data HTML and compares them with [`fingerprint_snapshot_152.json`](fingerprint_snapshot_152.json). Current `.65` run: `BASELINE_CREATED`, then regression compare `PASS`, `field_count=157`, `diff_count=0`.
+- `test_webrtc_proxy.js` requires an operator-supplied authorized `TEST_PROXY`. Without one, current result is `INCONCLUSIVE_NO_PROXY`; no proxy route claim is made. Proxy mode never proves universal WebRTC routing.
+
+Run snapshot regression:
+
+```powershell
+python .\tests\test_fingerprint_snapshot.py
+```
+
+Run authorized proxy WebRTC validation:
+
+```powershell
+$env:TEST_PROXY = 'http://proxy.example:8080'
+node .\test_webrtc_proxy.js
+```
+
+Do not place proxy credentials in reports or command history.
+
 ## Install SDK
 
 ```powershell

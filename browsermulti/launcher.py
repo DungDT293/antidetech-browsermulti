@@ -1,4 +1,5 @@
 import os
+import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -6,6 +7,7 @@ from playwright.async_api import BrowserContext, Page, async_playwright
 
 from . import __version__
 from .downloader import ensure_binary
+from .fingerprint import get_hardware_preset, validate_profile_coherence
 from .input_helper import SmoothInputController
 
 
@@ -50,10 +52,17 @@ async def launch_persistent_context(
     viewport: Optional[Dict[str, int]] = None,
     locale: str = "en-US",
     timezone_id: Optional[str] = None,
+    fingerprint_preset: Optional[str] = None,
+    proxy_country: Optional[str] = None,
     enable_smooth_input: bool = True,
     **kwargs,
 ) -> BrowserContext:
     """Launch BrowserMulti for authorized Playwright UI testing."""
+    if fingerprint_preset:
+        get_hardware_preset(fingerprint_preset)
+    coherence = validate_profile_coherence(locale, timezone_id, proxy_country)
+    for finding in coherence["findings"]:
+        warnings.warn(f"BrowserMulti profile coherence: {finding['message']}", UserWarning)
     binary_path = _resolve_executable_path(executable_path)
     playwright = await async_playwright().start()
     proxy_config = {"server": proxy} if isinstance(proxy, str) else proxy
